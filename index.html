@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vote Esquerda — Candidaturas 2026</title>
+<meta name="description" content="Encontre candidatas e candidatos do campo progressista nas eleições de 2026. Busque por nome, número, partido ou estado.">
+<meta property="og:title" content="Vote Esquerda — Candidaturas 2026">
+<meta property="og:description" content="Busque por nome, número, partido ou estado.">
+<meta name="theme-color" content="#0B1A33">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Cpath%20d='M32%2064%20L-40.00%2064.00%20A72%2072%200%200%201%20-32.87%2032.76%20Z'%20fill='%23009C3B'/%3E%3Cpath%20d='M32%2064%20L-32.87%2032.76%20A72%2072%200%200%201%20-12.89%207.71%20Z'%20fill='%23FFDF00'/%3E%3Cpath%20d='M32%2064%20L-12.89%207.71%20A72%2072%200%200%201%2015.98%20-6.19%20Z'%20fill='%23009C3B'/%3E%3Cpath%20d='M32%2064%20L15.98%20-6.19%20A72%2072%200%200%201%2048.02%20-6.19%20Z'%20fill='%23FFDF00'/%3E%3Cpath%20d='M32%2064%20L48.02%20-6.19%20A72%2072%200%200%201%2076.89%207.71%20Z'%20fill='%23009C3B'/%3E%3Cpath%20d='M32%2064%20L76.89%207.71%20A72%2072%200%200%201%2096.87%2032.76%20Z'%20fill='%23FFDF00'/%3E%3Cpath%20d='M32%2064%20L96.87%2032.76%20A72%2072%200%200%201%20104.00%2064.00%20Z'%20fill='%23009C3B'/%3E%3Ccircle%20cx='32'%20cy='54'%20r='22.5'%20fill='%23F6F4EC'/%3E%3Ccircle%20cx='32'%20cy='54'%20r='20'%20fill='%23002776'/%3E%3C/svg%3E">
+<link rel="preload" href="fontes/public-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fontes/archivo-black-latin.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+/* Fontes servidas do proprio dominio. Antes vinham do Google Fonts, o que custava
+   DNS + TLS em dois dominios externos antes de qualquer texto aparecer — caro em
+   conexao instavel. Arquivos: subconjunto latin, que cobre 100% do conteudo.
+   Public Sans e variavel: um arquivo so atende os pesos 400, 500 e 700. */
+@font-face{font-family:'Archivo Black';font-style:normal;font-weight:400;font-display:swap;
+  src:url(fontes/archivo-black-latin.woff2) format('woff2')}
+@font-face{font-family:'Public Sans';font-style:normal;font-weight:400;font-display:swap;
+  src:url(fontes/public-sans-latin.woff2) format('woff2')}
+@font-face{font-family:'Public Sans';font-style:normal;font-weight:500;font-display:swap;
+  src:url(fontes/public-sans-latin.woff2) format('woff2')}
+@font-face{font-family:'Public Sans';font-style:normal;font-weight:700;font-display:swap;
+  src:url(fontes/public-sans-latin.woff2) format('woff2')}
+:root{
+  --verde:#009C3B; --verde-escuro:#006B29;
+  --amarelo:#FFDF00;
+  --azul:#002776;
+  --vermelho:#DA121A; --vermelho-escuro:#A40D14;
+  --vermelho-claro:#F04A52;  /* texto pequeno sobre o marinho: o #DA121A so da 3,37:1 */
+  --marinho:#0B1A33;
+  --fundo:#F6F4EC;
+  --texto:#0B1A33; --texto-2:#3A4254; --texto-3:#4A5263;
+  --branco:#FFFFFF;
+  --display:'Archivo Black', Impact, sans-serif;
+  --corpo:'Public Sans', system-ui, sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--corpo);background:var(--fundo);color:var(--texto);-webkit-font-smoothing:antialiased}
+a{color:var(--vermelho)} a:hover{color:var(--vermelho-escuro)}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+:focus-visible{outline:3px solid var(--azul);outline-offset:2px}
+
+/* HERO */
+.hero{position:relative;height:clamp(240px,34vw,440px);overflow:hidden;
+  background:repeating-conic-gradient(from -90deg at 50% 100%, var(--amarelo) 0deg 6deg, var(--verde) 6deg 12deg)}
+.sol{position:absolute;left:50%;bottom:calc(clamp(160px,23vw,300px) * -0.43);width:clamp(160px,23vw,300px);aspect-ratio:1;
+  transform:translateX(-50%);border-radius:50%;background:var(--azul);border:clamp(4px,.6vw,8px) solid var(--fundo)}
+.mata{position:absolute;left:0;bottom:-1px;width:100%;height:45%;display:block}
+.topo{position:absolute;top:16px;left:16px;right:16px;display:flex;justify-content:flex-end;align-items:center;gap:8px;flex-wrap:wrap}
+.data{padding:6px 12px;background:var(--fundo);color:var(--marinho);font-size:clamp(12px,1.1vw,14px);font-weight:700}
+
+/* FAIXA */
+.faixa{background:var(--marinho);padding:8px 16px 40px;display:flex;flex-direction:column;align-items:center;gap:16px}
+.faixa h1{margin:0;font-family:var(--display);font-size:clamp(44px,7vw,88px);line-height:1;color:var(--vermelho);text-align:center;letter-spacing:-1px}
+.faixa p{margin:0;font-size:clamp(16px,1.6vw,20px);color:#E8ECF4;text-align:center;max-width:720px}
+.busca{width:100%;max-width:820px;display:flex;flex-direction:column;gap:8px}
+.busca label{font-size:14px;font-weight:700;color:var(--vermelho-claro)}
+.campo{display:flex;align-items:center;gap:12px;background:var(--branco);border:4px solid var(--vermelho);padding:0 8px 0 16px;height:64px}
+.campo input{flex:1;min-width:0;border:0;outline:none;font:inherit;font-size:clamp(17px,2vw,22px);color:var(--texto);background:transparent;height:100%}
+.campo input::placeholder{color:#5B6475}
+.campo input::-webkit-search-cancel-button{display:none}
+.limpar{min-height:44px;padding:0 12px;border:0;background:var(--fundo);color:var(--marinho);font:inherit;font-size:15px;font-weight:700;cursor:pointer}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.chip{min-height:44px;padding:0 16px;font:inherit;font-size:15px;font-weight:700;cursor:pointer;border:2px solid var(--vermelho);background:transparent;color:var(--branco)}
+.chip[aria-pressed="true"]{background:var(--vermelho);border-color:var(--vermelho);color:var(--branco)}
+
+/* RESULTADOS */
+main{max-width:1280px;margin:0 auto;padding:32px 16px}
+.cabecalho{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.cabecalho h2{margin:0;font-family:var(--display);font-size:clamp(22px,2.4vw,28px)}
+.grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;list-style:none;margin:0;padding:0}
+.vazio,.erro{padding:40px 20px;background:var(--branco);border:2px dashed #9AA3B5;text-align:center;font-size:18px}
+.card{background:var(--branco);border:2px solid var(--marinho);display:flex;flex-direction:column;height:100%}
+.card-topo{display:flex;gap:16px;padding:18px;align-items:center;border-bottom:2px solid var(--marinho)}
+.foto{width:84px;height:84px;flex-shrink:0;border-radius:50%;background:var(--azul);border:4px solid var(--amarelo);
+  display:flex;align-items:center;justify-content:center;color:var(--branco);font-family:var(--display);font-size:26px;overflow:hidden}
+.foto img{width:100%;height:100%;object-fit:cover;display:block}
+.info{display:flex;flex-direction:column;gap:4px;min-width:0}
+.nome{margin:0;font-size:20px;font-weight:700;line-height:1.2}
+.cargo{font-size:15px;color:var(--texto-2)}
+.nome-completo{font-size:13px;line-height:1.3;color:var(--texto-3)}
+.partido{align-self:flex-start;margin-top:4px;padding:2px 8px;background:var(--verde-escuro);color:var(--branco);font-size:13px;font-weight:700}
+.logo-partido{align-self:flex-start;margin-top:6px;height:24px;width:auto;max-width:140px;object-fit:contain;display:block}
+.selo-destaque{align-self:flex-start;margin-bottom:2px;padding:2px 8px;background:var(--marinho);color:var(--amarelo);font-size:11px;font-weight:700;letter-spacing:1px}
+.numero{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;background:var(--amarelo)}
+.numero small{font-size:13px;font-weight:700;letter-spacing:1px}
+.numero strong{font-family:var(--display);font-size:40px;line-height:1;letter-spacing:2px;font-weight:400}
+/* Aviso de candidatura sub judice. Texto em marinho, nao em vermelho: nesta pagina
+   vermelho e cor de link, e o aviso nao e clicavel. A barra vermelha a esquerda
+   faz o papel de alerta. */
+/* Esqueleto exibido enquanto a lista nao chegou: a pagina aparece inteira e so a
+   area dos cards fica em espera, em vez de a tela ficar vazia esperando o JSON. */
+.esqueleto{background:var(--branco);border:2px solid var(--marinho);padding:18px;animation:pulso 1.4s ease-in-out infinite}
+.esqueleto i{display:block;background:#DCD8CC}
+.esqueleto .ini{width:84px;height:84px;border-radius:50%;margin-bottom:14px}
+.esqueleto .l1{height:18px;width:70%;margin-bottom:9px}
+.esqueleto .l2{height:14px;width:45%;margin-bottom:18px}
+.esqueleto .l3{height:46px;width:100%}
+@keyframes pulso{0%,100%{opacity:1}50%{opacity:.5}}
+@media (prefers-reduced-motion:reduce){.esqueleto{animation:none}}
+.situacao{padding:10px 14px;background:var(--fundo);border-bottom:2px solid var(--marinho);border-left:6px solid var(--vermelho);font-size:13px;line-height:1.4;color:var(--marinho)}
+.proposta{padding:16px 18px;flex:1;font-size:15px;line-height:1.5;color:#1F2638}
+.proposta b{display:block;font-size:12px;letter-spacing:1px;color:var(--verde-escuro);margin-bottom:4px}
+.proposta:empty{padding:0}
+.links{display:flex;border-top:2px solid var(--marinho)}
+.links a,.links span{flex:1;min-height:48px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:15px;font-weight:700;text-decoration:none;padding:0 8px;text-align:center}
+.links > * + *{border-left:2px solid var(--marinho)}
+.links span{color:#8A91A0}
+.mais{display:block;margin:28px auto 0;min-height:52px;padding:0 32px;border:2px solid var(--vermelho);background:var(--vermelho);color:var(--branco);
+  font-family:var(--display);font-size:18px;letter-spacing:1px;cursor:pointer}
+.mais:hover{background:var(--vermelho-escuro);border-color:var(--vermelho-escuro)}
+footer{background:var(--marinho);color:#E8ECF4;padding:24px 16px;font-size:14px}
+footer div{max-width:1280px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+footer strong{font-family:var(--display);color:var(--vermelho-claro);font-size:18px;font-weight:400}
+footer a{color:var(--vermelho-claro)}
+footer .aviso{flex-direction:column;align-items:flex-start;gap:4px;justify-content:flex-start;margin-top:14px;padding-top:14px;border-top:1px solid #2A3550;font-size:13px;line-height:1.5;color:#C3CBD9}
+@media (max-width:480px){ .numero strong{font-size:34px} .foto{width:68px;height:68px;font-size:22px} }
+@media (prefers-reduced-motion:no-preference){ .card{animation:entra .25s ease-out both} @keyframes entra{from{opacity:0;transform:translateY(6px)}} }
+</style>
+</head>
+<body>
+
+<header class="hero" aria-hidden="true">
+  <div class="sol"></div>
+  <!-- Mata em penumbra: tres camadas de profundidade, clareira no centro para o sol -->
+  <svg class="mata" viewBox='0 0 1280 200' preserveAspectRatio='none'><g fill='#2E4B78'><path d='M-20 202L-20 150Q3 95 26 146Q49 100 72 146Q95 85 118 145Q141 102 164 146Q187 88 210 145Q233 93 256 146Q279 103 302 146Q325 89 348 145Q371 103 394 147Q417 104 440 147Q463 123 486 148Q509 136 532 149Q555 142 578 149Q601 142 624 149Q647 142 670 149Q693 142 716 149Q739 142 762 149Q785 142 808 149Q831 128 854 148Q877 114 900 147Q923 86 946 145Q969 103 992 146Q1015 78 1038 145Q1061 96 1084 146Q1107 100 1130 146Q1153 101 1176 146Q1199 95 1222 146Q1245 80 1268 145Q1291 99 1314 146Q1337 87 1360 145L1360 202Z'/></g><g fill='#1B3159'><rect x='0' y='174' width='1280' height='28'/><path d='M-27 176Q-24 122 -22 100L-18 100Q-16 122 -13 176Z'/><circle cx='4' cy='92' r='24'/><circle cx='-11' cy='84' r='26'/><circle cx='-29' cy='84' r='28'/><circle cx='-44' cy='92' r='28'/><ellipse cx='-20' cy='116' rx='38' ry='22'/><path d='M57 176Q60 120 62 97L66 97Q68 120 71 176Z'/><circle cx='88' cy='88' r='27'/><circle cx='73' cy='80' r='25'/><circle cx='55' cy='80' r='29'/><circle cx='40' cy='88' r='29'/><ellipse cx='64' cy='113' rx='38' ry='23'/><path d='M141 176Q144 117 146 93L150 93Q152 117 155 176Z'/><circle cx='172' cy='84' r='24'/><circle cx='157' cy='76' r='27'/><circle cx='139' cy='76' r='25'/><circle cx='124' cy='84' r='28'/><ellipse cx='148' cy='110' rx='38' ry='24'/><rect x='229' y='47' width='6' height='129'/><path d='M173 117Q232 100 291 117Q232 122 173 117Z'/><path d='M186 88Q232 71 278 88Q232 94 186 88Z'/><path d='M198 60Q232 43 266 60Q232 66 198 60Z'/><ellipse cx='232' cy='52' rx='26' ry='9'/><path d='M309 176Q312 122 314 100L318 100Q320 122 323 176Z'/><circle cx='340' cy='92' r='29'/><circle cx='325' cy='84' r='29'/><circle cx='307' cy='84' r='28'/><circle cx='292' cy='92' r='25'/><ellipse cx='316' cy='116' rx='38' ry='22'/><path d='M393 176Q397 129 398 110L402 110Q403 129 407 176Z'/><circle cx='422' cy='102' r='26'/><circle cx='409' cy='95' r='23'/><circle cx='391' cy='95' r='26'/><circle cx='378' cy='102' r='27'/><ellipse cx='400' cy='123' rx='35' ry='19'/><path d='M479 176Q481 144 482 132L486 132Q487 144 489 176Z'/><circle cx='502' cy='127' r='21'/><circle cx='491' cy='122' r='21'/><circle cx='477' cy='122' r='18'/><circle cx='466' cy='127' r='22'/><ellipse cx='484' cy='141' rx='28' ry='13'/><path d='M814 176Q817 139 818 124L822 124Q823 139 826 176Z'/><circle cx='839' cy='118' r='23'/><circle cx='827' cy='112' r='21'/><circle cx='813' cy='112' r='23'/><circle cx='801' cy='118' r='20'/><ellipse cx='820' cy='134' rx='30' ry='15'/><path d='M897 176Q901 119 902 96L906 96Q907 119 911 176Z'/><circle cx='927' cy='88' r='27'/><circle cx='913' cy='79' r='24'/><circle cx='895' cy='79' r='28'/><circle cx='881' cy='88' r='25'/><ellipse cx='904' cy='112' rx='36' ry='23'/><path d='M981 176Q984 122 986 100L990 100Q992 122 995 176Z'/><circle cx='1012' cy='92' r='26'/><circle cx='997' cy='84' r='27'/><circle cx='979' cy='84' r='27'/><circle cx='964' cy='92' r='28'/><ellipse cx='988' cy='116' rx='38' ry='22'/><rect x='1069' y='57' width='6' height='119'/><path d='M1017 121Q1072 106 1127 121Q1072 127 1017 121Z'/><path d='M1029 95Q1072 80 1115 95Q1072 101 1029 95Z'/><path d='M1041 69Q1072 54 1103 69Q1072 75 1041 69Z'/><ellipse cx='1072' cy='62' rx='24' ry='8'/><path d='M1149 176Q1152 117 1154 93L1158 93Q1160 117 1163 176Z'/><circle cx='1180' cy='84' r='25'/><circle cx='1165' cy='76' r='24'/><circle cx='1147' cy='76' r='27'/><circle cx='1132' cy='84' r='25'/><ellipse cx='1156' cy='110' rx='38' ry='24'/><path d='M1233 176Q1236 114 1238 90L1242 90Q1244 114 1247 176Z'/><circle cx='1264' cy='80' r='29'/><circle cx='1249' cy='71' r='25'/><circle cx='1231' cy='71' r='24'/><circle cx='1216' cy='80' r='24'/><ellipse cx='1240' cy='107' rx='38' ry='25'/><path d='M1317 176Q1320 122 1322 100L1326 100Q1328 122 1331 176Z'/><circle cx='1348' cy='92' r='28'/><circle cx='1333' cy='84' r='27'/><circle cx='1315' cy='84' r='28'/><circle cx='1300' cy='92' r='24'/><ellipse cx='1324' cy='116' rx='38' ry='22'/></g><g fill='#0B1A33'><rect x='0' y='188' width='1280' height='14'/><path d='M-44 200Q-49 129 -51 58L-47 58Q-41 129 -36 200Z'/><path d='M-49 58Q-81 36 -113 49Q-81 61 -49 61Z'/><path d='M-49 58Q-74 27 -99 29Q-74 52 -49 61Z'/><path d='M-49 58Q-59 20 -69 16Q-59 45 -49 61Z'/><path d='M-49 58Q-39 20 -29 16Q-39 45 -49 61Z'/><path d='M-49 58Q-24 27 1 29Q-24 52 -49 61Z'/><path d='M-49 58Q-17 36 15 49Q-17 61 -49 61Z'/><path d='M-49 58Q-52 19 -55 14Q-52 44 -49 61Z'/><path d='M63 200Q68 136 69 111L75 111Q76 136 81 200Z'/><circle cx='101' cy='101' r='29'/><circle cx='83' cy='92' r='31'/><circle cx='61' cy='92' r='29'/><circle cx='43' cy='101' r='31'/><ellipse cx='72' cy='129' rx='46' ry='25'/><path d='M175 200Q180 133 181 106L187 106Q188 133 193 200Z'/><circle cx='213' cy='96' r='34'/><circle cx='195' cy='86' r='33'/><circle cx='173' cy='86' r='31'/><circle cx='155' cy='96' r='30'/><ellipse cx='184' cy='125' rx='46' ry='27'/><path d='M292 200Q297 129 303 58L307 58Q305 129 300 200Z'/><path d='M305 58Q273 36 241 49Q273 61 305 61Z'/><path d='M305 58Q280 27 255 29Q280 52 305 61Z'/><path d='M305 58Q295 20 285 16Q295 45 305 61Z'/><path d='M305 58Q315 20 325 16Q315 45 305 61Z'/><path d='M305 58Q330 27 355 29Q330 52 305 61Z'/><path d='M305 58Q337 36 369 49Q337 61 305 61Z'/><path d='M305 58Q302 19 299 14Q302 44 305 61Z'/><path d='M400 200Q404 150 405 130L411 130Q412 150 416 200Z'/><circle cx='434' cy='122' r='28'/><circle cx='418' cy='115' r='26'/><circle cx='398' cy='115' r='30'/><circle cx='382' cy='122' r='27'/><ellipse cx='408' cy='144' rx='42' ry='20'/><path d='M848 200Q852 153 853 134L859 134Q860 153 864 200Z'/><circle cx='882' cy='127' r='27'/><circle cx='866' cy='120' r='30'/><circle cx='846' cy='120' r='25'/><circle cx='830' cy='127' r='30'/><ellipse cx='856' cy='147' rx='40' ry='19'/><path d='M964 200Q969 129 975 58L979 58Q977 129 972 200Z'/><path d='M977 58Q945 36 913 49Q945 61 977 61Z'/><path d='M977 58Q952 27 927 29Q952 52 977 61Z'/><path d='M977 58Q967 20 957 16Q967 45 977 61Z'/><path d='M977 58Q987 20 997 16Q987 45 977 61Z'/><path d='M977 58Q1002 27 1027 29Q1002 52 977 61Z'/><path d='M977 58Q1009 36 1041 49Q1009 61 977 61Z'/><path d='M977 58Q974 19 971 14Q974 44 977 61Z'/><path d='M1071 200Q1076 133 1077 106L1083 106Q1084 133 1089 200Z'/><circle cx='1109' cy='96' r='31'/><circle cx='1091' cy='86' r='33'/><circle cx='1069' cy='86' r='34'/><circle cx='1051' cy='96' r='31'/><ellipse cx='1080' cy='125' rx='46' ry='27'/><path d='M1183 200Q1188 130 1189 101L1195 101Q1196 130 1201 200Z'/><circle cx='1221' cy='91' r='33'/><circle cx='1203' cy='80' r='34'/><circle cx='1181' cy='80' r='29'/><circle cx='1163' cy='91' r='35'/><ellipse cx='1192' cy='121' rx='46' ry='28'/><path d='M1300 200Q1295 129 1293 58L1297 58Q1303 129 1308 200Z'/><path d='M1295 58Q1263 36 1231 49Q1263 61 1295 61Z'/><path d='M1295 58Q1270 27 1245 29Q1270 52 1295 61Z'/><path d='M1295 58Q1285 20 1275 16Q1285 45 1295 61Z'/><path d='M1295 58Q1305 20 1315 16Q1305 45 1295 61Z'/><path d='M1295 58Q1320 27 1345 29Q1320 52 1295 61Z'/><path d='M1295 58Q1327 36 1359 49Q1327 61 1295 61Z'/><path d='M1295 58Q1292 19 1289 14Q1292 44 1295 61Z'/></g></svg>
+  <div class="topo">
+    <span class="data">Eleições 2026 · 1º turno em 4 de outubro · 2º turno em 25 de outubro</span>
+  </div>
+</header>
+
+<section class="faixa">
+  <h1>VOTE ESQUERDA</h1>
+  <p>Encontre candidatas e candidatos do campo progressista no seu estado. Busque por nome, número, partido ou UF.</p>
+  <form class="busca" role="search" onsubmit="return false">
+    <label for="busca">Buscar candidato</label>
+    <div class="campo">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0B1A33" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
+      <input id="busca" type="search" autocomplete="off" enterkeyhint="search" placeholder="Ex.: PE, PSOL, Maria, 1350…">
+      <button type="button" class="limpar" id="limpar" hidden>Limpar</button>
+    </div>
+    <div class="chips" id="chips" role="group" aria-label="Filtrar por cargo"></div>
+  </form>
+</section>
+
+<main>
+  <div class="cabecalho">
+    <h2 id="contagem" aria-live="polite">Carregando…</h2>
+  </div>
+  <div id="mensagem"></div>
+  <ul class="grade" id="grade"></ul>
+  <button type="button" class="mais" id="mais" hidden>CARREGAR MAIS</button>
+</main>
+
+<footer>
+  <div>
+    <strong>VOTE ESQUERDA</strong>
+    <span>Dados das candidaturas: <a href="https://divulgacandcontas.tse.jus.br/" target="_blank" rel="noopener noreferrer">TSE — DivulgaCandContas</a> · Mozart Nascimento Pinho</span>
+  </div>
+  <div class="aviso">
+    <span>Iniciativa independente, sem vínculo com candidatura, partido ou coligação. Nenhum conteúdo impulsionado.</span>
+    <span>Logos dos partidos via <a href="https://commons.wikimedia.org/" target="_blank" rel="noopener noreferrer">Wikimedia Commons</a>, em domínio público — exceto a do PCB, por PCB, sob <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a>, e a do PCO, por Calloshccp, sob <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a>.</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  // ---- Configuração ----
+  var ARQUIVO = 'candidatos.json';
+  var POR_PAGINA = 12;   // 12 em vez de 24: metade das requisicoes de foto no primeiro paint
+  var UFS = {AC:'Acre',AL:'Alagoas',AP:'Amapá',AM:'Amazonas',BA:'Bahia',CE:'Ceará',DF:'Distrito Federal',ES:'Espírito Santo',GO:'Goiás',MA:'Maranhão',MT:'Mato Grosso',MS:'Mato Grosso do Sul',MG:'Minas Gerais',PA:'Pará',PB:'Paraíba',PR:'Paraná',PE:'Pernambuco',PI:'Piauí',RJ:'Rio de Janeiro',RN:'Rio Grande do Norte',RS:'Rio Grande do Sul',RO:'Rondônia',RR:'Roraima',SC:'Santa Catarina',SP:'São Paulo',SE:'Sergipe',TO:'Tocantins',BR:'Brasil'};
+  // Categorias de cargo: a ordem define a ordem dos chips e da lista
+  var CATEGORIAS = [
+    {id:'presidencia', label:'Presidência', re:/presid/},
+    {id:'governo',     label:'Governo',     re:/govern/},
+    {id:'senado',      label:'Senado',      re:/senad/},
+    {id:'federal',     label:'Dep. Federal', re:/federal/},
+    {id:'estadual',    label:'Dep. Estadual/Distrital', re:/estadual|distrital/}
+  ];
+
+  // ---- Estado ----
+  var todos = [], filtrados = [], mostrando = 0, cargo = 'todos', temDest = false;
+
+  // ---- Elementos ----
+  var $ = function (id) { return document.getElementById(id); };
+  var input = $('busca'), btnLimpar = $('limpar'), chips = $('chips'), grade = $('grade'),
+      contagem = $('contagem'), mensagem = $('mensagem'), btnMais = $('mais');
+
+  function norm(s) {
+    return String(s == null ? '' : s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
+  }
+  function linkSeguro(url) {
+    return typeof url === 'string' && /^https:\/\//i.test(url.trim()) ? url.trim() : null;
+  }
+  function categoria(c) {
+    var n = norm(c);
+    for (var i = 0; i < CATEGORIAS.length; i++) if (CATEGORIAS[i].re.test(n)) return i;
+    return CATEGORIAS.length;
+  }
+  function el(tag, cls, texto) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (texto != null) e.textContent = texto; // sempre texto puro, nunca HTML
+    return e;
+  }
+  function iniciais(nome) {
+    var p = String(nome || '?').trim().split(/\s+/);
+    return ((p[0] || '?')[0] + (p.length > 1 ? p[p.length - 1][0] : '')).toUpperCase();
+  }
+
+  // ---- Carregamento ----
+  // Em conexao instavel o que atrasa nao e o tamanho do JSON (~150 KB comprimido),
+  // e esperar a rede para mostrar qualquer coisa. Por isso, em tres etapas:
+  //   1. esqueleto na hora, sem depender de rede nenhuma;
+  //   2. se houver copia em cache, ela entra imediatamente;
+  //   3. a rede revalida em segundo plano e substitui a lista se tiver mudado.
+  var CACHE = 'vote-esquerda-lista';
+  var pronto = false;   // ja pintamos a lista alguma vez?
+  var daRede = false;   // o que esta na tela ja veio da rede?
+  var versao = null;    // identifica o conteudo ja pintado
+
+  function esqueleto(n) {
+    var frag = document.createDocumentFragment();
+    for (var i = 0; i < n; i++) {
+      var li = el('li');
+      var art = el('div', 'esqueleto');
+      art.setAttribute('aria-hidden', 'true');
+      ['ini', 'l1', 'l2', 'l3'].forEach(function (c) { art.appendChild(el('i', c)); });
+      li.appendChild(art); frag.appendChild(li);
+    }
+    grade.appendChild(frag);
+  }
+
+  function processar(dados) {
+    var lista = Array.isArray(dados) ? dados : (dados.candidatos || []);
+    // Se a rede devolveu o mesmo conteudo que ja esta na tela, nao repinta: repintar
+    // zeraria a busca digitada, os chips e o "carregar mais" que o visitante ja usou.
+    var v = String(dados.atualizado_em || '') + '|' + lista.length;
+    if (pronto && v === versao) return;
+    versao = v;
+    todos = lista.filter(function (c) { return c && c.nome && c.numero; }).map(function (c) {
+      var uf = String(c.uf || '').toUpperCase();
+      return {
+        nome: String(c.nome), numero: String(c.numero), uf: uf, cargo: String(c.cargo || ''),
+        partido: String(c.partido || ''), proposta: String(c.proposta || '').trim(),
+        foto: c.foto ? String(c.foto) : '', rede: linkSeguro(c.rede), tse: linkSeguro(c.tse),
+        cat: categoria(c.cargo), dest: c.destaque === true,
+        completo: String(c.nome_completo || ''),
+        situacao: String(c.situacao || '').trim(),
+        busca: norm([c.nome, c.nome_completo, c.numero, c.partido, uf, UFS[uf]].join(' | '))
+      };
+    }).sort(function (a, b) {
+      return (b.dest ? 1 : 0) - (a.dest ? 1 : 0) || a.cat - b.cat || a.uf.localeCompare(b.uf) || a.nome.localeCompare(b.nome, 'pt-BR');
+    });
+    temDest = todos.some(function (c) { return c.dest; });
+    chips.textContent = '';
+    montarChips();
+    if (!pronto) lerURL();   // a URL so manda na primeira pintura
+    pronto = true;
+    aplicar();
+  }
+
+  // O cache fica no Cache Storage, nao no localStorage: o arquivo passa de 2 MB
+  // cru e o localStorage costuma estourar em 5 MB no total.
+  function lerCache() {
+    if (!window.caches) return Promise.reject();
+    return caches.open(CACHE)
+      .then(function (c) { return c.match(ARQUIVO); })
+      .then(function (r) { return r ? r.json() : Promise.reject(); });
+  }
+  function gravarCache(resposta) {
+    if (!window.caches) return;
+    caches.open(CACHE).then(function (c) { c.put(ARQUIVO, resposta); })['catch'](function () {});
+  }
+
+  esqueleto(POR_PAGINA);
+
+  lerCache().then(function (dados) {
+    if (!daRede) processar(dados);          // a rede pode ter chegado antes
+  })['catch'](function () {});
+
+  fetch(ARQUIVO, { cache: 'no-cache' })
+    .then(function (r) {
+      if (!r.ok) throw new Error(r.status);
+      gravarCache(r.clone());
+      return r.json();
+    })
+    .then(function (dados) { daRede = true; processar(dados); })
+    ['catch'](function () {
+      if (pronto) return;   // ja tem lista do cache na tela: nao assusta o visitante
+      grade.textContent = '';
+      contagem.textContent = 'Não foi possível carregar a lista';
+      mensagem.className = 'erro';
+      mensagem.textContent = 'Tente recarregar a página em alguns instantes.';
+    });
+
+  // ---- Filtros ----
+  function montarChips() {
+    var presentes = {};
+    todos.forEach(function (c) { presentes[c.cat] = true; });
+    var opcoes = [{ id: 'todos', label: 'Todos' }].concat(CATEGORIAS.filter(function (_, i) { return presentes[i]; }));
+    opcoes.forEach(function (o) {
+      var b = el('button', 'chip', o.label);
+      b.type = 'button'; b.dataset.id = o.id;
+      b.addEventListener('click', function () { cargo = o.id; aplicar(); });
+      chips.appendChild(b);
+    });
+  }
+
+  function aplicar() {
+    var q = norm(input.value);
+    var idxCat = CATEGORIAS.findIndex(function (c) { return c.id === cargo; });
+    // Estado inicial (sem busca, sem filtro de cargo): mostra so os destaques
+    var soDest = temDest && !q && cargo === 'todos';
+    filtrados = todos.filter(function (c) {
+      if (soDest && !c.dest) return false;
+      if (idxCat >= 0 && c.cat !== idxCat) return false;
+      if (!q) return true;
+      // 2 letras só viram busca por estado se forem uma UF real; senão cai no texto (PT, PL, PV...)
+      if (q.length === 2 && UFS[q.toUpperCase()]) return norm(c.uf) === q;
+      return c.busca.indexOf(q) >= 0;
+    });
+    Array.prototype.forEach.call(chips.children, function (b) { b.setAttribute('aria-pressed', b.dataset.id === cargo ? 'true' : 'false'); });
+    btnLimpar.hidden = !input.value;
+    grade.textContent = ''; mostrando = 0;
+    var n = filtrados.length;
+    contagem.textContent = soDest ? n + (n === 1 ? ' destaque' : ' destaques')
+                                  : n + (n === 1 ? ' candidatura' : ' candidaturas');
+    if (n === 0) {
+      mensagem.className = 'vazio';
+      mensagem.textContent = 'Nenhum candidato encontrado' + (input.value ? ' para “' + input.value + '”' : '') + '. Tente a sigla do estado (ex.: SP) ou o número.';
+    } else { mensagem.className = ''; mensagem.textContent = ''; }
+    renderMais();
+    escreverURL();
+  }
+
+  function renderMais() {
+    var frag = document.createDocumentFragment();
+    var fim = Math.min(mostrando + POR_PAGINA, filtrados.length);
+    for (var i = mostrando; i < fim; i++) frag.appendChild(card(filtrados[i]));
+    grade.appendChild(frag);
+    mostrando = fim;
+    var resta = filtrados.length - mostrando;
+    btnMais.hidden = resta <= 0;
+    btnMais.textContent = 'CARREGAR MAIS (' + resta + ')';
+  }
+
+  // ---- Card ----
+  function card(c) {
+    var li = el('li'); var art = el('article', 'card'); li.appendChild(art);
+
+    var topo = el('div', 'card-topo');
+    var foto = el('div', 'foto');
+    var ini = iniciais(c.nome);
+    if (c.foto) {
+      var img = document.createElement('img');
+      img.src = c.foto; img.alt = 'Foto de ' + c.nome; img.loading = 'lazy'; img.decoding = 'async'; img.width = 84; img.height = 84;
+      img.onerror = function () { foto.textContent = ini; foto.setAttribute('aria-hidden', 'true'); };
+      foto.appendChild(img);
+    } else { foto.textContent = ini; foto.setAttribute('aria-hidden', 'true'); }
+    var info = el('div', 'info');
+    if (c.dest) info.appendChild(el('span', 'selo-destaque', 'DESTAQUE'));
+    info.appendChild(el('h3', 'nome', c.nome));
+    if (c.completo && norm(c.completo) !== norm(c.nome)) info.appendChild(el('span', 'nome-completo', c.completo));
+    info.appendChild(el('span', 'cargo', c.cargo + (c.uf ? ' · ' + c.uf : '')));
+    if (c.partido) info.appendChild(marcaPartido(c.partido));
+    topo.appendChild(foto); topo.appendChild(info); art.appendChild(topo);
+
+    var num = el('div', 'numero');
+    num.appendChild(el('small', null, 'VOTE'));
+    num.appendChild(el('strong', null, c.numero));
+    art.appendChild(num);
+
+    // Candidatura sub judice: avisa antes da proposta, colado na faixa do numero.
+    if (c.situacao) {
+      var sit = el('div', 'situacao', c.situacao);
+      sit.setAttribute('role', 'note');
+      art.appendChild(sit);
+    }
+
+    // Sem proposta o bloco vai vazio, mas continua no card: e o flex:1 dele
+    // que estica e mantem os links colados na base, alinhados entre os cards.
+    var prop = el('div', 'proposta');
+    if (c.proposta) { prop.appendChild(el('b', null, 'PROPOSTA')); prop.appendChild(el('span', null, c.proposta)); }
+    art.appendChild(prop);
+
+    var links = el('div', 'links');
+    links.appendChild(link(c.rede, 'Rede social', c.nome));
+    links.appendChild(link(c.tse, 'Candidatura no TSE', c.nome));
+    art.appendChild(links);
+    return li;
+  }
+  // Logo do partido: tenta logos/<sigla>.svg, depois .png, e cai no nome se não houver arquivo.
+  function marcaPartido(partido) {
+    var slug = norm(partido).replace(/[^a-z0-9]/g, '');
+    var img = document.createElement('img');
+    img.className = 'logo-partido';
+    img.alt = partido;
+    img.loading = 'lazy'; img.decoding = 'async';
+    img.onerror = function () {
+      if (img.getAttribute('data-ext') !== 'png') {
+        img.setAttribute('data-ext', 'png');
+        img.src = 'logos/' + slug + '.png';
+        return;
+      }
+      if (img.parentNode) img.parentNode.replaceChild(el('span', 'partido', partido), img);
+    };
+    img.src = 'logos/' + slug + '.svg';
+    return img;
+  }
+
+  function link(url, texto, nome) {
+    if (!url) return el('span', null, texto);
+    var a = el('a', null, texto);
+    a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer';
+    a.setAttribute('aria-label', texto + ' de ' + nome + ' (abre em nova aba)');
+    return a;
+  }
+
+  // ---- URL compartilhável: ?q=PE&cargo=senado ----
+  function lerURL() {
+    var p = new URLSearchParams(location.search);
+    if (p.get('q')) input.value = p.get('q');
+    var c = p.get('cargo');
+    if (c && CATEGORIAS.some(function (x) { return x.id === c; })) cargo = c;
+  }
+  function escreverURL() {
+    var p = new URLSearchParams();
+    if (input.value) p.set('q', input.value);
+    if (cargo !== 'todos') p.set('cargo', cargo);
+    var s = p.toString();
+    history.replaceState(null, '', s ? '?' + s : location.pathname);
+  }
+
+  // ---- Eventos ----
+  var t;
+  input.addEventListener('input', function () { clearTimeout(t); t = setTimeout(aplicar, 120); });
+  btnLimpar.addEventListener('click', function () { input.value = ''; aplicar(); input.focus(); });
+  btnMais.addEventListener('click', function () {
+    var primeiroNovo = mostrando;
+    renderMais();
+    var novo = grade.children[primeiroNovo];
+    if (novo) { var a = novo.querySelector('a'); if (a) a.focus({ preventScroll: true }); }
+  });
+})();
+</script>
+</body>
+</html>
