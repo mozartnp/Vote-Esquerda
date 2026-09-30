@@ -1,0 +1,2 @@
+# Um endereço só: www manda pro apex, preservando caminho e query.
+https://www.voteesquerda.com.br/* https://voteesquerda.com.br/:splat 301
