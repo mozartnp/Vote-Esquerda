@@ -121,6 +121,16 @@ footer div{max-width:1280px;margin:0 auto;display:flex;justify-content:space-bet
 footer strong{font-family:var(--display);color:var(--vermelho-claro);font-size:18px;font-weight:400}
 footer a{color:var(--vermelho-claro)}
 footer .aviso{flex-direction:column;align-items:flex-start;gap:4px;justify-content:flex-start;margin-top:14px;padding-top:14px;border-top:1px solid #2A3550;font-size:13px;line-height:1.5;color:#C3CBD9}
+/* <details> nativo: abre e fecha sem JS e ja vem acessivel pelo teclado. */
+.sobre{max-width:1280px;margin:14px auto 0;padding-top:14px;border-top:1px solid #2A3550}
+.sobre summary{display:flex;align-items:center;gap:10px;min-height:44px;cursor:pointer;
+  font-size:14px;font-weight:700;color:var(--vermelho-claro);list-style:none}
+.sobre summary::-webkit-details-marker{display:none}  /* o triangulo padrao do Safari */
+.sobre summary::before{content:'+';width:1em;font-family:var(--display);font-size:16px;line-height:1}
+.sobre[open] summary::before{content:'–'}
+.sobre p{margin:0 0 10px;font-size:13px;line-height:1.6;color:#C3CBD9}
+.sobre p:last-child{margin-bottom:4px}
+.sobre .criador{margin-top:14px;padding-top:12px;border-top:1px solid #2A3550;font-weight:700;color:#E8ECF4}
 @media (max-width:480px){ .numero strong{font-size:34px} .foto{width:68px;height:68px;font-size:22px} }
 @media (prefers-reduced-motion:no-preference){ .card{animation:entra .25s ease-out both} @keyframes entra{from{opacity:0;transform:translateY(6px)}} }
 </style>
@@ -162,12 +172,19 @@ footer .aviso{flex-direction:column;align-items:flex-start;gap:4px;justify-conte
 <footer>
   <div>
     <strong>VOTE ESQUERDA</strong>
-    <span>Dados das candidaturas: <a href="https://divulgacandcontas.tse.jus.br/" target="_blank" rel="noopener noreferrer">TSE — DivulgaCandContas</a> · Mozart Nascimento Pinho</span>
+    <span>Dados das candidaturas: <a href="https://divulgacandcontas.tse.jus.br/" target="_blank" rel="noopener noreferrer">TSE — DivulgaCandContas</a></span>
   </div>
   <div class="aviso">
     <span>Iniciativa independente, sem vínculo com candidatura, partido ou coligação. Nenhum conteúdo impulsionado.</span>
     <span>Logos dos partidos via <a href="https://commons.wikimedia.org/" target="_blank" rel="noopener noreferrer">Wikimedia Commons</a>, em domínio público — exceto a do PCB, por PCB, sob <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a>, e a do PCO, por Calloshccp, sob <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a>.</span>
   </div>
+  <details class="sobre">
+    <summary>Saiba mais sobre o projeto</summary>
+    <p>Este site é um projeto cívico independente, mantido sem qualquer vínculo formal com partidos políticos, campanhas eleitorais ou órgãos públicos.</p>
+    <p>A plataforma reúne dados públicos oficiais registrados no Tribunal Superior Eleitoral (TSE) de candidaturas pertencentes a partidos historicamente ou programaticamente alinhados ao campo progressista e da esquerda. Estão contempladas nesta seleção as seguintes legendas: PDT, PCdoB, PSOL, PT, PV, REDE, PCB, PSTU, UP e PCO.</p>
+    <p>Em respeito à transparência pública, ressalta-se que tal categorização, bem como quaisquer outras decisões relativas à organização e destaque de informações, reflete uma curadoria autoral e editorial do desenvolvedor, exercida no âmbito de sua liberdade cívica de manifestação e organização de informações públicas.</p>
+    <p class="criador">Criador do site: Mozart Nascimento Pinho</p>
+  </details>
 </footer>
 
 <script>
