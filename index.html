@@ -74,20 +74,24 @@ main{max-width:1280px;margin:0 auto;padding:32px 16px}
 .grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;list-style:none;margin:0;padding:0}
 .vazio,.erro{padding:40px 20px;background:var(--branco);border:2px dashed #9AA3B5;text-align:center;font-size:18px}
 .card{background:var(--branco);border:2px solid var(--marinho);display:flex;flex-direction:column;height:100%}
-.card-topo{display:flex;gap:16px;padding:18px;align-items:center;border-bottom:2px solid var(--marinho)}
-.foto{width:84px;height:84px;flex-shrink:0;border-radius:50%;background:var(--azul);border:4px solid var(--amarelo);
+/* O flex:1 fica aqui, nao no .proposta. A grade estica todos os cards da fileira
+   ate a altura do mais alto, e essa sobra vai para o elemento flexivel. No
+   .proposta ela virava faixa branca entre o amarelo e os links; aqui vira
+   respiro em volta da foto, que o align-items:center distribui. */
+.card-topo{display:flex;flex:1;gap:16px;padding:18px;align-items:center;border-bottom:2px solid var(--marinho)}
+.foto{width:84px;height:84px;flex-shrink:0;border-radius:50%;background:var(--azul);border:4px solid var(--vermelho);
   display:flex;align-items:center;justify-content:center;color:var(--branco);font-family:var(--display);font-size:26px;overflow:hidden}
 .foto img{width:100%;height:100%;object-fit:cover;display:block}
 .info{display:flex;flex-direction:column;gap:4px;min-width:0}
 .nome{margin:0;font-size:20px;font-weight:700;line-height:1.2}
-.cargo{font-size:15px;color:var(--texto-2)}
-.nome-completo{font-size:13px;line-height:1.3;color:var(--texto-3)}
-.partido{align-self:flex-start;margin-top:4px;padding:2px 8px;background:var(--verde-escuro);color:var(--branco);font-size:13px;font-weight:700}
-.logo-partido{align-self:flex-start;margin-top:6px;height:24px;width:auto;max-width:140px;object-fit:contain;display:block}
+.nome-completo{font-size:13px;line-height:1.3;min-height:1.3em;color:var(--texto-3)}
+.partido-bloco{align-self:flex-start;margin-top:6px;display:flex;flex-direction:column;gap:3px}
+.logo-partido{height:24px;width:auto;max-width:140px;object-fit:contain;display:block}
+.partido-sigla{font-size:12px;font-weight:700;letter-spacing:.5px;color:var(--texto-2)}
 .selo-destaque{align-self:flex-start;margin-bottom:2px;padding:2px 8px;background:var(--marinho);color:var(--amarelo);font-size:11px;font-weight:700;letter-spacing:1px}
-.numero{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;background:var(--amarelo)}
-.numero small{font-size:13px;font-weight:700;letter-spacing:1px}
-.numero strong{font-family:var(--display);font-size:40px;line-height:1;letter-spacing:2px;font-weight:400}
+.numero{display:flex;flex-direction:column;gap:2px;padding:10px 18px 12px;background:var(--amarelo)}
+.numero small{font-size:13px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;line-height:1.3}
+.numero strong{align-self:flex-end;font-family:var(--display);font-size:40px;line-height:1;letter-spacing:2px;font-weight:400}
 /* Aviso de candidatura sub judice. Texto em marinho, nao em vermelho: nesta pagina
    vermelho e cor de link, e o aviso nao e clicavel. A barra vermelha a esquerda
    faz o papel de alerta. */
@@ -102,7 +106,7 @@ main{max-width:1280px;margin:0 auto;padding:32px 16px}
 @keyframes pulso{0%,100%{opacity:1}50%{opacity:.5}}
 @media (prefers-reduced-motion:reduce){.esqueleto{animation:none}}
 .situacao{padding:10px 14px;background:var(--fundo);border-bottom:2px solid var(--marinho);border-left:6px solid var(--vermelho);font-size:13px;line-height:1.4;color:var(--marinho)}
-.proposta{padding:16px 18px;flex:1;font-size:15px;line-height:1.5;color:#1F2638}
+.proposta{padding:16px 18px;font-size:15px;line-height:1.5;color:#1F2638}
 .proposta b{display:block;font-size:12px;letter-spacing:1px;color:var(--verde-escuro);margin-bottom:4px}
 .proposta:empty{padding:0}
 .links{display:flex;border-top:2px solid var(--marinho)}
@@ -252,10 +256,15 @@ footer .aviso{flex-direction:column;align-items:flex-start;gap:4px;justify-conte
         cat: categoria(c.cargo), dest: c.destaque === true,
         completo: String(c.nome_completo || ''),
         situacao: String(c.situacao || '').trim(),
+        indef: /indeferid/i.test(String(c.situacao || '')),
         busca: norm([c.nome, c.nome_completo, c.numero, c.partido, uf, UFS[uf]].join(' | '))
       };
     }).sort(function (a, b) {
-      return (b.dest ? 1 : 0) - (a.dest ? 1 : 0) || a.cat - b.cat || a.uf.localeCompare(b.uf) || a.nome.localeCompare(b.nome, 'pt-BR');
+      // Registro indeferido afunda antes de qualquer outro criterio, inclusive do
+      // destaque: nao adianta recomendar quem pode nem contar o voto.
+      return (a.indef ? 1 : 0) - (b.indef ? 1 : 0)
+          || (b.dest ? 1 : 0) - (a.dest ? 1 : 0)
+          || a.cat - b.cat || a.uf.localeCompare(b.uf) || a.nome.localeCompare(b.nome, 'pt-BR');
     });
     temDest = todos.some(function (c) { return c.dest; });
     chips.textContent = '';
@@ -366,13 +375,20 @@ footer .aviso{flex-direction:column;align-items:flex-start;gap:4px;justify-conte
     var info = el('div', 'info');
     if (c.dest) info.appendChild(el('span', 'selo-destaque', 'DESTAQUE'));
     info.appendChild(el('h3', 'nome', c.nome));
-    if (c.completo && norm(c.completo) !== norm(c.nome)) info.appendChild(el('span', 'nome-completo', c.completo));
-    info.appendChild(el('span', 'cargo', c.cargo + (c.uf ? ' · ' + c.uf : '')));
+    // A linha do nome completo e sempre criada, mesmo vazia: reservar a altura
+    // evita que quem tem nome de urna igual ao completo fique uma linha mais
+    // curto que os vizinhos da fileira. Nomes longos ainda ocupam duas linhas;
+    // essa diferenca e absorvida pelo flex:1 do .card-topo (ver CSS).
+    var temCompleto = c.completo && norm(c.completo) !== norm(c.nome);
+    info.appendChild(el('span', 'nome-completo', temCompleto ? c.completo : ''));
     if (c.partido) info.appendChild(marcaPartido(c.partido));
     topo.appendChild(foto); topo.appendChild(info); art.appendChild(topo);
 
+    // Cargo em cima ocupando a largura, numero embaixo a direita. O cargo nao
+    // divide a linha com o numero porque "Deputado Distrital · DF" ao lado de um
+    // numero de 5 digitos nao cabe num card de 300px.
     var num = el('div', 'numero');
-    num.appendChild(el('small', null, 'VOTE'));
+    num.appendChild(el('small', null, c.cargo + (c.uf ? ' · ' + c.uf : '')));
     num.appendChild(el('strong', null, c.numero));
     art.appendChild(num);
 
@@ -383,8 +399,8 @@ footer .aviso{flex-direction:column;align-items:flex-start;gap:4px;justify-conte
       art.appendChild(sit);
     }
 
-    // Sem proposta o bloco vai vazio, mas continua no card: e o flex:1 dele
-    // que estica e mantem os links colados na base, alinhados entre os cards.
+    // Sem proposta o bloco vai vazio e o .proposta:empty zera o padding, entao
+    // ele nao ocupa altura nenhuma. Quem estica o card e o .card-topo.
     var prop = el('div', 'proposta');
     if (c.proposta) { prop.appendChild(el('b', null, 'PROPOSTA')); prop.appendChild(el('span', null, c.proposta)); }
     art.appendChild(prop);
@@ -397,10 +413,11 @@ footer .aviso{flex-direction:column;align-items:flex-start;gap:4px;justify-conte
   }
   // Logo do partido: tenta logos/<sigla>.svg, depois .png, e cai no nome se não houver arquivo.
   function marcaPartido(partido) {
+    var bloco = el('div', 'partido-bloco');
     var slug = norm(partido).replace(/[^a-z0-9]/g, '');
     var img = document.createElement('img');
     img.className = 'logo-partido';
-    img.alt = partido;
+    img.alt = '';  // decorativa: a sigla logo abaixo ja nomeia o partido
     img.loading = 'lazy'; img.decoding = 'async';
     img.onerror = function () {
       if (img.getAttribute('data-ext') !== 'png') {
@@ -408,10 +425,12 @@ footer .aviso{flex-direction:column;align-items:flex-start;gap:4px;justify-conte
         img.src = 'logos/' + slug + '.png';
         return;
       }
-      if (img.parentNode) img.parentNode.replaceChild(el('span', 'partido', partido), img);
+      if (img.parentNode) img.parentNode.removeChild(img);  // sem arquivo: fica so a sigla
     };
     img.src = 'logos/' + slug + '.svg';
-    return img;
+    bloco.appendChild(img);
+    bloco.appendChild(el('span', 'partido-sigla', partido));
+    return bloco;
   }
 
   function link(url, texto, nome) {
