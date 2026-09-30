@@ -1,7 +1,6 @@
 # Vote Esquerda
 
-Site de página única com as candidaturas do campo progressista nas eleições de 2026,
-com busca por nome, número, partido ou estado.
+Site com as candidaturas do campo progressista nas eleições de 2026, com busca por nome, número, partido ou estado.
 
 HTML, CSS e JavaScript puros: sem framework, sem build, sem dependências para instalar.
 
@@ -73,8 +72,3 @@ extração de 30/09/2026, filtrada pelos partidos PDT, PCdoB, PSOL, PT, PV, REDE
 PSTU, UP e PCO. As fotos são as oficiais do TSE. Os campos `proposta` e `destaque` não
 existem nos dados abertos e são preenchidos à mão.
 
-## Aviso legal
-
-O rodapé precisa identificar o responsável pela página (nome e CPF, ou CNPJ), conforme a
-Resolução TSE nº 23.610/2019 sobre propaganda eleitoral na internet. Confirme as
-exigências com assessoria jurídica antes de publicar.
