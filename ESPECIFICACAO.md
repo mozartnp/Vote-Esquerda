@@ -101,7 +101,13 @@ Estrutura da página, de cima para baixo:
   "Candidatura quilombola" são marcações diretas, sem acordeão em volta. **Nenhuma vem
   marcada** — a página abre listando todo mundo.
 - **Estado não lista "Brasil".** `BR` não é um estado: é a abrangência nacional das cinco
-  candidaturas à presidência, que se acham pelo cargo ou pelo nome. São 27 opções, não 28.
+  candidaturas à presidência. São 27 opções, não 28.
+- **As candidaturas nacionais passam por qualquer estado marcado.** Quem filtra por PE está
+  perguntando "em quem eu posso votar em PE", e a presidência está em todos os estados — some
+  dali seria esconder voto que a pessoa tem. Marcar PE dá 141: as 136 de PE mais as 5
+  nacionais, e a contagem da faceta diz 141 também. Cruzar com cargo continua valendo: PE +
+  Senado dá 7, sem presidência nenhuma. Na faceta isso é um campo `universal:'BR'`, para a
+  regra não ficar escrita à mão dentro do motor de filtros.
 - Os três marcadores de identidade ficam juntos no pé do painel. "Candidatura indígena"
   cobre as 105 (`etnia` = Indígena), **inclusive as 15 que não declararam povo** e que por
   isso não aparecem no seletor logo abaixo.
@@ -266,22 +272,54 @@ buscar, e precisa ser óbvia para quem tem pouca familiaridade com tela.
 
 ### As seis vagas
 
-Presidente, Governador, **Senador 1**, **Senador 2**, Dep. Federal e Dep. Estadual — a cédula
-de uma eleição geral. Os dois senadores aparecem numerados em todo lugar: no painel, no
-impresso, na imagem e no texto do WhatsApp. No DF a quinta vaga se chama **Dep. Distrital**,
-decidido pelo cargo de quem ocupa a vaga (ou, com a vaga vazia, pelo estado que a colinha
-já tem).
+A cédula de uma eleição geral, **na ordem da urna** — é nela que a pessoa vai ler a colinha,
+de cima para baixo, enquanto digita. Os dois senadores aparecem numerados em todo lugar: no
+painel, no impresso, na imagem e no texto do WhatsApp. No DF a segunda vaga se chama
+**Dep. Distrital**, decidido pelo cargo de quem ocupa a vaga (ou, com a vaga vazia, pelo
+estado que a colinha já tem).
 
 Cada cargo tem um tamanho fixo de número de urna, e é ele que desenha as caixas vazias de
 quem ainda não escolheu — vale para as 3.789 candidaturas da lista, sem exceção:
 
-| Vaga | Dígitos |
-|---|---|
-| Presidente | 2 |
-| Governador | 2 |
-| Senador 1 e Senador 2 | 3 |
-| Dep. Federal | 4 |
-| Dep. Estadual / Distrital | 5 |
+| Ordem | Vaga | Dígitos |
+|---|---|---|
+| 1 | Dep. Federal | 4 |
+| 2 | Dep. Estadual / Distrital | 5 |
+| 3 | Senador 1 | 3 |
+| 4 | Senador 2 | 3 |
+| 5 | Governador | 2 |
+| 6 | Presidente | 2 |
+
+### Preencher a vaga direto no painel
+
+Vaga vazia **é um campo de busca**, não um rótulo. Quem já sabe em quem vai votar monta a
+colinha ali mesmo, sem precisar achar o card na lista — era o caminho que faltava, e a lista
+de cards virava obstáculo para quem não queria procurar ninguém.
+
+- **Por nome ou por número**, no mesmo campo. Termo só de dígitos casa o número **por
+  prefixo**, igual à busca do topo (`1` devolve `13`, `16`, `130`…). O resto casa por trecho
+  no nome de urna **e no nome completo**.
+- **Clicar no campo já abre a lista**, antes de digitar qualquer coisa: para a maioria das
+  vagas isso responde "quem eu posso escolher aqui?" de primeira.
+- Cada opção mostra **nome de urna, nome completo, partido, estado e número**. O nome completo
+  está ali porque a busca também procura nele — sem isso, digitar "silva" devolveria gente
+  cujo nome de urna não tem "silva" nenhum, e o resultado pareceria aleatório.
+- A lista já vem **recortada pela vaga**: só o cargo certo, só o estado da colinha (a
+  presidência não tem estado) e só quem ainda não está em alguma vaga. Por esse caminho não
+  existe conflito de estado nem de cargo — ele é evitado em vez de virar aviso.
+- **★** marca recomendação do site, e elas vêm primeiro. **Registro indeferido** aparece em
+  linha própria, em vermelho: o card avisa, e quem escolhe pela vaga não passa pelo card.
+- Mostra **8 por vez**, com o rodapé dizendo quantas existem (`Mostrando 8 de 65 — digite o
+  nome ou o número.`).
+- Teclado: setas percorrem, **Enter escolhe** (e com uma opção só escolhe direto, que é o
+  caminho de quem digitou o número inteiro), 1º Esc limpa o texto, 2º fecha. Depois de
+  escolher, o foco cai na **próxima vaga vazia** — dá para montar a colinha inteira sem tirar
+  a mão do teclado. Na última vaga, vai para o `×` dela.
+- Só **uma lista aberta por vez**. Depender do `blur` não basta: no celular ele nem sempre
+  chega antes do toque na vaga seguinte, e duas listas abertas se sobrepõem.
+
+> As seis linhas são criadas **uma vez** e depois só atualizadas, como as facetas do painel.
+> Recriar a `<ol>` a cada mudança tirava o foco e o texto de quem estivesse digitando.
 
 ### Adicionar e remover
 

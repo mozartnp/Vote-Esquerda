@@ -276,7 +276,38 @@ footer .aviso{flex-direction:column;align-items:flex-start;gap:4px;justify-conte
 .vaga-cargo{grid-area:cargo;font-size:12px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--texto-2)}
 .vaga-nome{grid-area:nome;min-width:0;font-size:17px;font-weight:700;line-height:1.25;overflow-wrap:break-word}
 .vaga.livre{grid-template-columns:minmax(0,1fr);grid-template-areas:'cargo' 'nome'}
-.vaga.livre .vaga-nome{font-size:15px;font-weight:400;font-style:italic;color:#6B7384}
+
+/* Vaga vazia vira campo de busca: da para montar a colinha sem sair do painel,
+   digitando o nome ou o numero. Mesmo padrao do seletor de povo indigena. */
+.vaga-busca{grid-area:nome;position:relative}
+.vaga:not(.livre) .vaga-busca{display:none}
+.vaga.livre .vaga-nome,.vaga.livre .vaga-num,.vaga.livre .vaga-x{display:none}
+.vaga-busca input{width:100%;height:46px;padding:0 10px;border:2px solid var(--marinho);
+  background:var(--branco);font:inherit;font-size:16px;color:var(--texto)}
+.vaga-busca input::placeholder{color:#5B6475}
+/* A lista flutua sobre as vagas de baixo: empurrar as linhas faria a colinha
+   inteira pular de tamanho a cada tecla digitada. */
+.vaga-lista{position:absolute;left:0;right:0;top:48px;z-index:20;list-style:none;margin:0;padding:0;
+  max-height:282px;overflow-y:auto;background:var(--branco);border:2px solid var(--marinho)}
+.vaga-lista[hidden]{display:none}
+.vaga-lista li[role=option]{display:grid;grid-template-columns:minmax(0,1fr) auto;
+  grid-template-areas:'nome num' 'meta num' 'aviso num';gap:1px 10px;align-items:center;
+  padding:8px 10px;border-top:2px solid var(--fundo);cursor:pointer}
+.vaga-lista li[role=option]:first-child{border-top:0}
+.vaga-lista li.ativa,.vaga-lista li[role=option]:hover{background:var(--marinho);color:var(--branco)}
+.vo-nome{grid-area:nome;font-size:15px;font-weight:700;line-height:1.2;overflow-wrap:break-word}
+.vo-meta{grid-area:meta;min-width:0;font-size:12px;line-height:1.3;color:var(--texto-3);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vaga-lista li.ativa .vo-meta,.vaga-lista li[role=option]:hover .vo-meta{color:#C3CBD9}
+.vo-rec{color:var(--verde-escuro)}
+.vaga-lista li.ativa .vo-rec,.vaga-lista li[role=option]:hover .vo-rec{color:var(--amarelo)}
+.vo-aviso{grid-area:aviso;font-size:12px;line-height:1.3;font-weight:700;color:var(--vermelho-escuro)}
+.vaga-lista li.ativa .vo-aviso,.vaga-lista li[role=option]:hover .vo-aviso{color:var(--vermelho-claro)}
+.vo-num{grid-area:num;align-self:center;padding:4px 8px;background:var(--amarelo);color:var(--marinho);
+  font-family:var(--display);font-size:16px;font-weight:400;letter-spacing:1px}
+.vaga-nada{padding:12px 10px;font-size:14px;line-height:1.4;color:var(--texto-3)}
+.vaga-mais{padding:9px 10px;border-top:2px solid var(--fundo);background:var(--fundo);
+  font-size:12px;line-height:1.4;color:var(--texto-3)}
 .vaga-num{grid-area:num}
 .vaga-x{grid-area:x;width:36px;height:36px;padding:0;border:2px solid var(--marinho);background:var(--branco);
   color:var(--marinho);font:inherit;font-size:18px;font-weight:700;line-height:1;cursor:pointer}
@@ -541,8 +572,10 @@ p.colinha-recado{margin:0;padding:0 14px 14px;font-size:12px;line-height:1.45;fo
     {id:'cargo',      label:'Cargo',          campo:'cargoLabel', ordem:'fixa'},
     // "Brasil" fora da lista: BR nao e um estado, e a abrangencia nacional das
     // cinco candidaturas a presidencia. Quem procura por elas usa o cargo.
+    // `universal` marca o valor que passa por qualquer recorte desta faceta: a
+    // presidencia tem uf 'BR' e nao e de estado nenhum, logo esta em todos.
     {id:'uf',         label:'Estado',         campo:'uf',         ordem:'rotulo',
-     excluir:['BR'], rotulo:function (v) { return UFS[v] || v; }},
+     excluir:['BR'], universal:'BR', rotulo:function (v) { return UFS[v] || v; }},
     {id:'partido',    label:'Partido',        campo:'partido',    ordem:'quantidade'},
     // "Sem federação" fica de fora: a faceta serve para quem quer votar numa
     // federação, nao para recortar os cinco partidos que concorrem sozinhos —
@@ -569,6 +602,10 @@ p.colinha-recado{margin:0;padding:0 14px 14px;font-size:12px;line-height:1.45;fo
   // Indice por chave de candidatura: e por ele que a colinha resolve quem guardou
   // em cada vaga, depois que a lista chega.
   var porChave = {};
+  // Candidaturas agrupadas por categoria de cargo, na mesma ordem da lista
+  // (indeferido por ultimo, recomendacao primeiro): e o que a busca de cada vaga
+  // da colinha percorre.
+  var porCargo = [];
   // sel[faceta] = valores marcados. Vazio quer dizer "nao filtra por isso".
   var sel = {}, VALORES = {};
   FACETAS.forEach(function (f) { sel[f.id] = []; VALORES[f.id] = []; });
@@ -658,8 +695,11 @@ p.colinha-recado{margin:0;padding:0 14px 14px;font-size:12px;line-height:1.45;fo
   function passaFacetas(c, pular) {
     for (var i = 0; i < FACETAS.length; i++) {
       if (i === pular) continue;
-      var e = sel[FACETAS[i].id];
-      if (e.length && e.indexOf(c[FACETAS[i].campo]) < 0) return false;
+      var f = FACETAS[i], e = sel[f.id];
+      if (!e.length) continue;
+      var v = c[f.campo];
+      if (f.universal && v === f.universal) continue;   // candidatura nacional
+      if (e.indexOf(v) < 0) return false;
     }
     return true;
   }
@@ -675,8 +715,14 @@ p.colinha-recado{margin:0;padding:0 14px 14px;font-size:12px;line-height:1.45;fo
       if (!passaTexto(c, q)) return;
       for (var i = 0; i < FACETAS.length; i++) {
         if (!passaFacetas(c, i)) continue;
-        var v = c[FACETAS[i].campo];
-        if (v) r[FACETAS[i].id][v] = (r[FACETAS[i].id][v] || 0) + 1;
+        var f = FACETAS[i], v = c[f.campo];
+        // A candidatura nacional entra na conta de todo estado, porque marcar
+        // qualquer um deles nao a tira da lista.
+        if (f.universal && v === f.universal) {
+          VALORES[f.id].forEach(function (u) { r[f.id][u] = (r[f.id][u] || 0) + 1; });
+          continue;
+        }
+        if (v) r[f.id][v] = (r[f.id][v] || 0) + 1;
       }
     });
     return r;
@@ -775,7 +821,11 @@ p.colinha-recado{margin:0;padding:0 14px 14px;font-size:12px;line-height:1.45;fo
           || a.cat - b.cat || a.uf.localeCompare(b.uf) || a.nome.localeCompare(b.nome, 'pt-BR');
     });
     porChave = {};
-    todos.forEach(function (c) { porChave[chaveCand(c)] = c; });
+    porCargo = [];
+    todos.forEach(function (c) {
+      porChave[chaveCand(c)] = c;
+      (porCargo[c.cat] || (porCargo[c.cat] = [])).push(c);
+    });
     montarValores();
     montarPainel();
     if (!pronto) lerURL();   // a URL so manda na primeira pintura
@@ -1224,13 +1274,15 @@ p.colinha-recado{margin:0;padding:0 14px 14px;font-size:12px;line-height:1.45;fo
   // `digitos` e o tamanho do numero de urna do cargo. Vale para as 3.789
   // candidaturas da lista, sem excecao, e e o que desenha as caixas vazias de
   // quem ainda nao escolheu: a pessoa imprime e preenche a mao.
+  // A ordem e a da urna: e nela que a pessoa vai ler a colinha, de cima para
+  // baixo, enquanto digita. Deputado federal primeiro, presidente por ultimo.
   var VAGAS = [
-    {id:'presidente', cat:0, label:'Presidente',    digitos:2},
-    {id:'governador', cat:1, label:'Governador',    digitos:2},
+    {id:'federal',    cat:3, label:'Dep. Federal',  digitos:4},
+    {id:'estadual',   cat:4, label:'Dep. Estadual', digitos:5},
     {id:'senador1',   cat:2, label:'Senador 1',     digitos:3},
     {id:'senador2',   cat:2, label:'Senador 2',     digitos:3},
-    {id:'federal',    cat:3, label:'Dep. Federal',  digitos:4},
-    {id:'estadual',   cat:4, label:'Dep. Estadual', digitos:5}
+    {id:'governador', cat:1, label:'Governador',    digitos:2},
+    {id:'presidente', cat:0, label:'Presidente',    digitos:2}
   ];
   var GUARDA = 'vote-esquerda-colinha';
   var SITE = 'voteesquerda.com.br';
@@ -1329,14 +1381,18 @@ p.colinha-recado{margin:0;padding:0 14px 14px;font-size:12px;line-height:1.45;fo
   // Um digito por caixa, como na urna e no santinho de rua: e assim que o numero e
   // conferido na hora de votar, digito a digito. As caixas ficam escondidas do
   // leitor de tela e o numero inteiro vai num texto so, senao sai digito a digito.
-  function caixinhaNum(numero, cls) {
-    var caixa = el('span', cls);
+  function preencherCaixinha(caixa, numero) {
+    caixa.textContent = '';
     caixa.appendChild(el('span', 'sr-only', 'número ' + numero));
     String(numero).split('').forEach(function (d) {
       var b = el('b', null, d);
       b.setAttribute('aria-hidden', 'true');
       caixa.appendChild(b);
     });
+  }
+  function caixinhaNum(numero, cls) {
+    var caixa = el('span', cls);
+    preencherCaixinha(caixa, numero);
     return caixa;
   }
   // Vaga sem candidato no impresso: as caixas saem em branco, no tamanho do
@@ -1346,6 +1402,199 @@ p.colinha-recado{margin:0;padding:0 14px 14px;font-size:12px;line-height:1.45;fo
     caixa.setAttribute('aria-hidden', 'true');
     vazios(n).forEach(function () { caixa.appendChild(el('b', 'branco')); });
     return caixa;
+  }
+
+  // ---- Busca dentro da vaga ----
+  // Quem ja sabe em quem vai votar monta a colinha aqui mesmo, digitando o nome
+  // ou o numero, sem ter de achar o card na lista. Mesmo padrao de combobox do
+  // seletor de povo indigena (WAI-ARIA), e a mesma regra de numero da busca do
+  // topo: digito casa por prefixo, porque o numero de urna e hierarquico.
+  var LIMITE_VAGA = 8;
+  var vagasUI = null;
+
+  // O que cabe nesta vaga: o cargo certo, o estado da colinha (a presidencia nao
+  // tem estado) e quem ainda nao esta em vaga nenhuma.
+  function opcoesVaga(v, q) {
+    var uf = ufColinha(), pool = porCargo[v.cat] || [], achados = [], digitos = SO_DIGITOS.test(q);
+    for (var i = 0; i < pool.length; i++) {
+      var c = pool[i];
+      if (v.cat !== 0 && uf && c.uf !== uf) continue;
+      if (vagaDe(c)) continue;
+      if (q && (digitos ? c.numero.indexOf(q) !== 0 : c.busca.indexOf(q) < 0)) continue;
+      achados.push(c);
+    }
+    return achados;
+  }
+
+  function montarVagaBusca(v) {
+    var caixa = el('div', 'vaga-busca');
+    var campo = document.createElement('input');
+    campo.type = 'text';
+    campo.id = 'vaga-' + v.id;
+    campo.autocomplete = 'off';
+    campo.placeholder = 'Nome ou número';
+    campo.setAttribute('role', 'combobox');
+    campo.setAttribute('aria-expanded', 'false');
+    campo.setAttribute('aria-controls', 'lista-vaga-' + v.id);
+    campo.setAttribute('aria-autocomplete', 'list');
+    var lista = document.createElement('ul');
+    lista.className = 'vaga-lista';
+    lista.id = 'lista-vaga-' + v.id;
+    lista.setAttribute('role', 'listbox');
+    lista.hidden = true;
+    caixa.appendChild(campo);
+    caixa.appendChild(lista);
+
+    var b = { v: v, caixa: caixa, input: campo, lista: lista, itens: [], ativo: -1 };
+    campo.addEventListener('focus', function () { pintarVagaLista(b); });
+    campo.addEventListener('input', function () { b.ativo = -1; pintarVagaLista(b); });
+    // Sem o atraso, o blur fecha a lista antes de o clique no item chegar.
+    campo.addEventListener('blur', function () { setTimeout(function () { fecharVagaBusca(b); }, 160); });
+    campo.addEventListener('keydown', function (ev) {
+      if (ev.key === 'ArrowDown' || ev.key === 'ArrowUp') {
+        ev.preventDefault();
+        if (!b.itens.length) return pintarVagaLista(b);
+        b.ativo = (b.ativo + (ev.key === 'ArrowDown' ? 1 : b.itens.length - 1)) % b.itens.length;
+        pintarVagaLista(b);
+      } else if (ev.key === 'Enter') {
+        ev.preventDefault();
+        // Com uma opcao so, Enter escolhe sem precisar descer a seta: e o caminho
+        // de quem digitou o numero inteiro.
+        var k = b.ativo >= 0 ? b.ativo : (b.itens.length === 1 ? 0 : -1);
+        if (k >= 0) escolherNaVaga(b, b.itens[k]);
+      } else if (ev.key === 'Escape') {   // 1o Esc limpa o que foi digitado, 2o fecha
+        ev.stopPropagation();
+        if (campo.value) { campo.value = ''; b.ativo = -1; pintarVagaLista(b); }
+        else fecharVagaBusca(b);
+      }
+    });
+    return b;
+  }
+
+  function fecharVagaBusca(b) {
+    b.lista.hidden = true;
+    b.lista.textContent = '';
+    b.itens = [];
+    b.ativo = -1;
+    b.input.setAttribute('aria-expanded', 'false');
+    b.input.removeAttribute('aria-activedescendant');
+  }
+
+  function pintarVagaLista(b) {
+    // So uma lista aberta por vez. Depender do blur para fechar a anterior nao
+    // basta: no celular ele nem sempre chega antes do toque na vaga seguinte, e
+    // duas listas abertas se sobrepoem na tela.
+    if (vagasUI) vagasUI.forEach(function (u) { if (u.busca !== b) fecharVagaBusca(u.busca); });
+    var q = norm(b.input.value), achados = opcoesVaga(b.v, q);
+    b.itens = achados.slice(0, LIMITE_VAGA);
+    if (b.ativo >= b.itens.length) b.ativo = -1;
+    b.lista.textContent = '';
+    b.lista.hidden = false;
+    b.input.setAttribute('aria-expanded', 'true');
+
+    if (!b.itens.length) {
+      // Em conexao lenta da para abrir a colinha antes de a lista chegar. Dizer
+      // "nenhuma candidatura" ali seria mentira: ainda nao se sabe.
+      var nada = el('li', 'vaga-nada', !todos.length
+        ? 'Carregando as candidaturas…'
+        : q ? 'Nenhuma candidatura para “' + b.input.value + '” nesta vaga.'
+            : 'Nenhuma candidatura disponível para esta vaga.');
+      nada.setAttribute('role', 'presentation');
+      b.lista.appendChild(nada);
+      b.input.removeAttribute('aria-activedescendant');
+      return;
+    }
+
+    b.itens.forEach(function (c, k) {
+      var li = el('li');
+      li.id = 'vo-' + b.v.id + '-' + k;
+      li.setAttribute('role', 'option');
+      li.setAttribute('aria-selected', k === b.ativo ? 'true' : 'false');
+      if (k === b.ativo) li.className = 'ativa';
+
+      var nome = el('span', 'vo-nome');
+      if (c.dest) {
+        var est = el('span', 'vo-rec', '★ ');
+        est.setAttribute('aria-hidden', 'true');
+        nome.appendChild(est);
+        nome.appendChild(el('span', 'sr-only', 'Recomendação do site: '));
+      }
+      nome.appendChild(document.createTextNode(c.nome));
+      li.appendChild(nome);
+
+      // O nome completo entra na linha de baixo porque a busca tambem procura
+      // nele: sem isso, digitar "silva" devolve gente cujo nome de urna nao tem
+      // "silva" nenhum, e o resultado parece aleatorio.
+      var partes = [];
+      if (c.completo && norm(c.completo) !== norm(c.nome)) partes.push(c.completo);
+      partes.push(c.partido);
+      if (c.uf && c.uf !== 'BR') partes.push(c.uf);
+      li.appendChild(el('span', 'vo-meta', partes.join(' · ')));
+      // Registro indeferido avisa aqui tambem: o card avisa, e quem escolhe pela
+      // vaga nao passa pelo card. Em linha propria, que nao corta no reticente.
+      if (c.indef) li.appendChild(el('span', 'vo-aviso', 'Registro indeferido'));
+      li.appendChild(el('b', 'vo-num', c.numero));
+
+      li.addEventListener('mousedown', function (ev) { ev.preventDefault(); });  // nao rouba o foco
+      li.addEventListener('click', function () { escolherNaVaga(b, c); });
+      b.lista.appendChild(li);
+    });
+
+    if (achados.length > b.itens.length) {
+      var mais = el('li', 'vaga-mais',
+        'Mostrando ' + b.itens.length + ' de ' + achados.length + ' — digite o nome ou o número.');
+      mais.setAttribute('role', 'presentation');
+      b.lista.appendChild(mais);
+    }
+    if (b.ativo >= 0) b.input.setAttribute('aria-activedescendant', 'vo-' + b.v.id + '-' + b.ativo);
+    else b.input.removeAttribute('aria-activedescendant');
+  }
+
+  function escolherNaVaga(b, c) {
+    b.input.value = '';
+    fecharVagaBusca(b);
+    por(b.v, c);
+    focarProximaVaga(b.v);
+  }
+
+  // Depois de escolher, o foco cai na proxima vaga ainda vazia: da para montar a
+  // colinha inteira sem tirar a mao do teclado. Sem vaga adiante, vai para o
+  // botao de tirar da vaga recem-preenchida — o campo onde o foco estava acabou
+  // de sumir, e foco perdido no corpo da pagina atrapalha quem usa leitor.
+  function focarProximaVaga(apos) {
+    if (!vagasUI) return;
+    var i = 0, k;
+    for (; i < vagasUI.length; i++) if (vagasUI[i].v === apos) break;
+    for (k = i + 1; k < vagasUI.length; k++) {
+      if (!candDaVaga(vagasUI[k].v)) return foco(vagasUI[k].busca.input);
+    }
+    if (vagasUI[i]) foco(vagasUI[i].x);
+  }
+  function foco(e) {
+    if (!e) return;
+    try { e.focus({ preventScroll: true }); } catch (err) { e.focus(); }
+  }
+
+  // As seis linhas sao criadas uma vez e depois so atualizadas. Recriar a cada
+  // mudanca tiraria o foco e o texto de quem estivesse digitando numa delas.
+  function montarVagas() {
+    colinhaVagas.textContent = '';
+    vagasUI = VAGAS.map(function (v) {
+      var li = el('li', 'vaga');
+      var cargo = el('span', 'vaga-cargo');
+      var nome = el('span', 'vaga-nome');
+      var num = el('span', 'num-caixa vaga-num');
+      var x = el('button', 'vaga-x', '×');
+      x.type = 'button';
+      x.title = 'Tirar da colinha';
+      var busca = montarVagaBusca(v);
+      var u = { v: v, li: li, cargo: cargo, nome: nome, num: num, x: x, busca: busca, c: null };
+      x.addEventListener('click', function () { if (u.c) remover(v, u.c); });
+      li.appendChild(cargo); li.appendChild(nome); li.appendChild(num);
+      li.appendChild(x); li.appendChild(busca.caixa);
+      colinhaVagas.appendChild(li);
+      return u;
+    });
   }
 
   // ---- Pintar ----
@@ -1368,22 +1617,23 @@ p.colinha-recado{margin:0;padding:0 14px 14px;font-size:12px;line-height:1.45;fo
       colinhaUf.appendChild(document.createTextNode(' — Governador, Senador e deputados são do mesmo estado.'));
     }
 
-    colinhaVagas.textContent = '';
-    VAGAS.forEach(function (v) {
-      var c = candDaVaga(v);
-      var li = el('li', 'vaga' + (c ? '' : ' livre'));
-      li.appendChild(el('span', 'vaga-cargo', rotuloVaga(v, c)));
-      li.appendChild(el('span', 'vaga-nome', c ? c.nome : 'Vaga vazia'));
+    if (!vagasUI) montarVagas();
+    vagasUI.forEach(function (u) {
+      var c = candDaVaga(u.v);
+      u.c = c;
+      u.cargo.textContent = rotuloVaga(u.v, c);
+      u.li.className = 'vaga' + (c ? '' : ' livre');
       if (c) {
-        li.appendChild(caixinhaNum(c.numero, 'num-caixa vaga-num'));
-        var x = el('button', 'vaga-x', '×');
-        x.type = 'button';
-        x.title = 'Tirar da colinha';
-        x.setAttribute('aria-label', 'Tirar ' + c.nome + ' da vaga de ' + rotuloVaga(v, c));
-        x.addEventListener('click', function () { remover(v, c); });
-        li.appendChild(x);
+        u.nome.textContent = c.nome;
+        preencherCaixinha(u.num, c.numero);
+        u.x.setAttribute('aria-label', 'Tirar ' + c.nome + ' da vaga de ' + rotuloVaga(u.v, c));
       }
-      colinhaVagas.appendChild(li);
+      u.busca.input.setAttribute('aria-label',
+        'Buscar candidatura para a vaga de ' + rotuloVaga(u.v, null) + ', por nome ou número');
+      // A lista aberta de uma vaga que acabou de ser preenchida (ou cujo estado
+      // mudou) nao serve mais. A que esta sob o cursor se repinta com o recorte novo.
+      if (document.activeElement === u.busca.input && !c) pintarVagaLista(u.busca);
+      else { u.busca.input.value = ''; fecharVagaBusca(u.busca); }
     });
 
     btnColLimpar.disabled = !n;

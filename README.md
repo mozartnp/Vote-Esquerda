@@ -28,10 +28,14 @@ substituicoes.md   ajustes manuais feitos na extração do TSE
 
 ## A colinha
 
-O visitante monta as seis vagas da cédula (Presidente, Governador, Senador 1, Senador 2,
-Dep. Federal e Dep. Estadual) e leva impressa para a urna — na hora de votar não pode levar o
-celular. Vaga não preenchida sai com a linha do nome pontilhada e as caixas do número em
-branco, então dá para imprimir em branco e completar à mão.
+O visitante monta as seis vagas da cédula **na ordem da urna** (Dep. Federal, Dep. Estadual,
+Senador 1, Senador 2, Governador e Presidente) e leva impressa para a urna — na hora de votar
+não pode levar o celular. Vaga não preenchida sai com a linha do nome pontilhada e as caixas
+do número em branco, então dá para imprimir em branco e completar à mão.
+
+Cada vaga vazia é um **campo de busca**: dá para preencher pelo nome ou pelo número, sem
+precisar procurar o card na lista. A lista de sugestões já vem recortada pelo cargo e pelo
+estado da colinha.
 
 A seleção fica **só no `localStorage` do navegador**: não há banco de dados e nada sai da
 máquina de quem acessa. Sem `localStorage` disponível (aba privada, por exemplo) a página
