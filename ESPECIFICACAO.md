@@ -517,6 +517,25 @@ estado de outro módulo muta (`botoes.length = 0` em `catalogo.js`, em vez de
 
 ---
 
+### Prévia do link (WhatsApp, Telegram, redes)
+
+O cartão com imagem que aparece ao colar o endereço vem das meta tags `og:` no
+`<head>`. Três coisas que não são óbvias:
+
+- A `og:image` precisa de **URL absoluta** (`https://voteesquerda.com.br/og.png`).
+  O robô do WhatsApp não resolve caminho relativo — com caminho relativo o cartão
+  sai só com texto, que era o estado anterior.
+- A imagem é **1200×630** (proporção 1.91:1, a do cartão grande) e pesa ~75 KB.
+  Vale manter folgado abaixo de ~300 KB: acima disso o WhatsApp tende a desistir
+  da imagem e cair no cartão pequeno.
+- A prévia fica **em cache do lado deles**, sem prazo garantido. Para trocar a
+  arte, publique com **nome novo** (`og-2.png`) e aponte a meta tag para ele;
+  sobrescrever o `og.png` pode continuar mostrando a arte velha por muito tempo.
+
+O `og.png` foi gerado a partir do próprio `css/estilo.css` — é o hero (sol e mata)
+mais a faixa com o `<h1>`, renderizados em 1200×630. Refazer é só recompor esse
+par de blocos e fotografar a tela nesse tamanho.
+
 ## 8. Publicação
 
 1. Criar um repositório no GitHub com os arquivos acima.
