@@ -15,9 +15,10 @@ Site de página única para as eleições de 2026: lista de candidaturas do camp
 | Hospedagem | Repositório no GitHub + Cloudflare Pages (alternativa: Netlify) | Grátis, CDN global, proteção contra DDoS, HTTPS automático, deploy a cada commit |
 | Domínio | Domínio próprio já registrado, apontado via CNAME no painel do Pages | — |
 | Paginação | Botão **"Carregar mais"**, 12 cards por vez | Melhor que paginação numerada no celular. 12 em vez de 24 corta pela metade as requisições de foto do primeiro carregamento |
-| Busca | Um único campo que busca por nome, número, partido, sigla de UF ou nome do estado | Pedido do cliente |
-| Filtro extra | Chips por cargo (Presidência, Governo, Senado, Dep. Federal, Dep. Estadual/Distrital) | Ajuda com listas grandes. Só aparecem os chips de cargos que existem nos dados |
-| Filtros na URL | `?q=PE&cargo=senado` | Permite compartilhar um link já filtrado (ex.: "candidatos de PE") |
+| Busca e filtros | Um painel único à esquerda dos resultados. O topo da página não tem controle nenhum | Busca e filtro espalhados em dois lugares era a origem da confusão: ninguém sabia que dava para combinar |
+| Busca | Campo de texto dentro do painel, que procura só por **nome, nome completo e número** | Partido e estado saíram dela porque agora têm faceta própria. Um campo que fazia tudo ao mesmo tempo não deixava claro o que ele fazia |
+| Filtros | 13 facetas, todas combináveis. Marcar dois valores na mesma faceta **soma** (PSOL *ou* PT); facetas diferentes **cruzam** (PSOL *e* mulher *e* PE) | Era o segundo pedido mais repetido: não dava para combinar nada |
+| Filtros na URL | `?uf=PE&partido=PSOL\|PT&sexo=Feminino` | Qualquer recorte montado no painel vira link compartilhável |
 | Segurança do conteúdo | Todo texto do JSON é inserido com `textContent`, nunca `innerHTML`. Links só são aceitos se começarem com `https://` | Evita XSS por conteúdo colado errado na lista |
 
 ---
@@ -38,9 +39,9 @@ Inspiração: estética vetorial de "sol nascente" (raios partindo do horizonte,
 |---|---|---|
 | `--verde` | `#009C3B` | Raios |
 | `--verde-escuro` | `#006B29` | Links, selo do partido (contraste AA com branco) |
-| `--amarelo` | `#FFDF00` | Raios, título, faixa do número, chips |
+| `--amarelo` | `#FFDF00` | Raios, faixa do número, fichas do seletor de povo |
 | `--azul` | `#002776` | Sol, fundo da foto/iniciais |
-| `--marinho` | `#0B1A33` | Montanhas, faixa da busca, bordas, texto |
+| `--marinho` | `#0B1A33` | Montanhas, faixa do título, cabeçalho do painel, bordas, texto |
 | `--fundo` | `#F6F4EC` | Fundo da página |
 
 ---
@@ -59,40 +60,88 @@ Estrutura da página, de cima para baixo:
 │      \ \ \      ( sol azul )     / / /                   │
 │ ▲▲▲▲ montanhas marinho ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲ │
 ├──────────────────────────────────────────────────────────┤  faixa marinho
-│                  VOTE ESQUERDA (amarelo)                 │
-│      Encontre candidatas e candidatos… (subtítulo)       │
-│   Buscar candidato                                       │
-│   ┌────────────────────────────────────────┬─────────┐   │
-│   │ 🔍 Ex.: PE, PSOL, Maria, 1350…         │ Limpar  │   │  borda amarela 4px
-│   └────────────────────────────────────────┴─────────┘   │
-│   [Todos] [Governo] [Senado] [Dep. Federal] [Dep. Est.]  │  chips
+│                  VOTE ESQUERDA (vermelho)                │
+│      Encontre candidatas e candidatos… (subtítulo)       │  nenhum controle aqui
 ├──────────────────────────────────────────────────────────┤  fundo creme
-│ 37 candidaturas                Lista atualizada em …     │
-│ ┌──────────────┐ ┌──────────────┐ ┌──────────────┐       │
-│ │ (foto) Nome  │ │              │ │              │       │  grade auto-fill,
-│ │ Cargo · UF   │ │    card      │ │    card      │       │  mín. 300px/coluna
-│ │ [PARTIDO]    │ │              │ │              │       │
-│ │▓VOTE    1350▓│ │              │ │              │       │  ← faixa amarela
-│ │ PROPOSTA …   │ │              │ │              │       │
-│ │Rede │ TSE    │ │              │ │              │       │
-│ └──────────────┘ └──────────────┘ └──────────────┘       │
-│               [ CARREGAR MAIS (85) ]                     │
+│ ┌────────────────────┐  3.789 candidaturas               │
+│ │ BUSCAR E FILTRAR ✕ │  ┌──────────┐ ┌──────────┐        │
+│ │ 🔍 Nome ou número  │  │ (foto)   │ │          │        │  grade auto-fill,
+│ │ ☐ Recomendação  27 │  │ Nome     │ │   card   │        │  mín. 340px/coluna
+│ │ Cargo            + │  │▓VOTE 1350│ │          │        │  ← faixa amarela
+│ │ Estado         1 + │  │Rede │ TSE│ │          │        │
+│ │ Partido        2 + │  └──────────┘ └──────────┘        │
+│ │ Federação        + │  ┌──────────┐ ┌──────────┐        │
+│ │ Gênero           + │  │          │ │          │        │
+│ │ Cor ou raça      + │  │   card   │ │   card   │        │
+│ │ Idade            + │  │          │ │          │        │
+│ │ Escolaridade     + │  └──────────┘ └──────────┘        │
+│ │ Ocupação         + │                                   │
+│ │ Patrimônio       + │     [ CARREGAR MAIS (85) ]        │
+│ │ ☐ Indígena    105 │                                   │
+│ │ Povo indígena    + │                                   │
+│ │ ☐ Quilombola    81 │                                   │
+│ └────────────────────┘  painel grudado no topo (sticky)  │
 ├──────────────────────────────────────────────────────────┤
 │ VOTE ESQUERDA     Dados: TSE · [RESPONSÁVEL / CNPJ]      │  rodapé marinho
 └──────────────────────────────────────────────────────────┘
 ```
 
+### O painel
+
+- **Busca** fora da área rolável: é o primeiro recurso de quem já sabe em quem votar,
+  e não pode sumir quando o visitante rola as facetas.
+- **Facetas** são `<details>` nativos, **todas fechadas** ao abrir a página. O número
+  vermelho no cabeçalho diz quantos valores estão marcados naquela faceta.
+- Cada valor mostra **quantas candidaturas ainda restam** se ele for marcado, contado
+  ignorando a própria faceta — é por isso que marcar PSOL não zera o PT na mesma lista.
+  Valor que não sobrou ninguém **desbota, mas não some**: lista que encolhe e cresce a
+  cada clique é lista em que ninguém acha de novo o que acabou de ver.
+- **Alternador** (um valor só): "Recomendação do site", "Candidatura indígena" e
+  "Candidatura quilombola" são marcações diretas, sem acordeão em volta. **Nenhuma vem
+  marcada** — a página abre listando todo mundo.
+- Os três marcadores de identidade ficam juntos no pé do painel. "Candidatura indígena"
+  cobre as 105 (`etnia` = Indígena), **inclusive as 15 que não declararam povo** e que por
+  isso não aparecem no seletor logo abaixo.
+- **Povo indígena** é um seletor com busca: 46 povos, quase todos com uma candidatura só.
+  O visitante digita, e o que escolhe vira ficha dentro do próprio campo. **Os povos que
+  existem no recorte atual sobem para o topo**: com MS marcado a lista abre em Guarani
+  Kaiowá (9), Guató (2), Atikum, Guaraní e Terena (1 cada), e só então os zerados. É a
+  única lista do painel que se reordena conforme o filtro, porque é uma lista que se
+  percorre lendo, não uma em que se guarda a posição.
 ### Card de candidato
 1. Foto circular (84px, borda amarela). Sem foto, ou se a imagem falhar, aparecem as **iniciais** sobre fundo azul.
-2. Nome, depois "Cargo · UF", depois o selo do partido (verde-escuro).
+2. Selo **RECOMENDAÇÃO** (amarelo sobre marinho) quando `destaque: true`, depois nome,
+   "Cargo · UF" e o selo do partido.
 3. Faixa amarela com "VOTE" e o **número em destaque** (Archivo Black, 40px).
 4. **Aviso de situação**, só quando `situacao` não está vazio: candidatura sub judice.
 5. Proposta, ou "Proposta ainda não cadastrada." se o campo estiver vazio.
 6. Dois links que abrem em nova aba: **Rede social** e **Candidatura no TSE**. Se o link não existir, o texto aparece em cinza, sem link.
 
 ### Responsivo
-- Celular (390px): hero menor, título quebra em duas linhas, chips quebram linha, cards em 1 coluna, sem rolagem horizontal.
-- Desktop: até 3–4 colunas (máx. 1280px de largura útil).
+- Celular (até 900px): o painel vira **gaveta de tela inteira**, atrás de um botão
+  "BUSCAR E FILTRAR" com o número de filtros ativos. Não dá para deixar a coluna fixa: ela
+  sozinha ocuparia a altura da tela antes do primeiro card. Com as facetas fechadas, as 13
+  cabem numa tela de 390×844 sem rolagem. A busca vai junto, dentro da gaveta — o topo da
+  página fica sem controle nenhum, em celular e em desktop.
+- Desktop: painel grudado no topo (`sticky`) + grade, container de até **1780px** (não os
+  1280px de antes: o painel come largura útil, e em 1280 sobravam duas colunas esticadas de
+  451px com tela vazia dos dois lados).
+- **O piso do card é 340px, e isso não é palpite:** "Candidatura no TSE" mede 141px, a linha
+  de links divide o card em duas metades iguais, e abaixo de 320px de card o rótulo quebra em
+  duas linhas. 340 deixa folga para a fonte de reserva.
+- Entre 901px e 1439px o painel encolhe para 240px. Num notebook de 1366 com painel de 300px
+  só caberiam duas colunas, e o card esticava para 487px; com 240px cabem três de 341px. O
+  custo é rótulo longo de faceta ("Dep. Estadual/Distrital") quebrar em duas linhas, que é
+  mais barato do que perder um terço dos cards por fileira.
+
+| viewport | painel | colunas | card |
+|---|---|---|---|
+| 1024 | 240px | 2 | 351px |
+| 1280 | 240px | 2 | 479px |
+| 1366 | 240px | 3 | 341px |
+| 1440 | 300px | 3 | 342px |
+| 1512 | 300px | 3 | 366px |
+| 1920 e acima | 300px | 4 | 341px |
 
 ---
 
@@ -125,14 +174,14 @@ Estrutura da página, de cima para baixo:
 | `nome_completo` | não | Nome de registro no TSE. Aparece em linha menor abaixo do nome de urna (só quando difere dele) e também entra na busca |
 | `numero` | sim | Sempre **string** (preserva zeros e formatação). Tamanho por cargo: 2 dígitos (presidência, governo), 3 (senado), 4 (dep. federal), 5 (dep. estadual/distrital) |
 | `uf` | sim | Sigla em maiúsculas. `BR` para presidência |
-| `cargo` | sim | Texto livre. A categoria do chip é detectada pelo texto: *presid*, *govern*, *senad*, *federal*, *estadual/distrital*. Pode usar a forma feminina |
+| `cargo` | sim | Texto livre. A categoria da faceta é detectada pelo texto: *presid*, *govern*, *senad*, *federal*, *estadual/distrital*. Pode usar a forma feminina |
 | `partido` | sim | Sigla |
 | `situacao` | não | Aviso sobre o registro da candidatura. Vazio no caso normal (deferido). Quando preenchido, aparece numa faixa entre o número e a proposta, com barra vermelha à esquerda |
 | `proposta` | não | Texto puro, sem HTML |
 | `foto` | não | Caminho relativo (`fotos/…`) ou URL `https://`. Quadrada, 300×300, JPG/WebP, ~30 KB |
 | `rede`, `tse` | não | Precisam começar com `https://`, senão são descartados |
 
-- `destaque` (booleano) define quem aparece na tela inicial, antes de qualquer busca. Se **nenhum** candidato estiver marcado, o site abre listando todo mundo, de 24 em 24.
+- `destaque` (booleano) alimenta o selo **RECOMENDAÇÃO** do card e a faceta "Recomendação do site". No dado o campo continua `destaque`; na tela ele se chama recomendação, que é o que a marcação quer dizer para quem lê. A faceta **não vem marcada** — a página abre listando todo mundo. Se nenhum candidato estiver marcado, ela não aparece.
 - `atualizado_em` aparece no topo da lista como "Lista atualizada em …". **Atualize a cada edição.**
 - A ordem no arquivo não importa. O site ordena por cargo (Presidência → Dep. Estadual), depois por UF, depois por nome.
 - Convenção de nome das fotos: `fotos/<numero>-<uf>.jpg`, tudo em minúsculas.
@@ -141,23 +190,39 @@ Estrutura da página, de cima para baixo:
 
 ## 5. Comportamento
 
-- **Busca:** ignora acentos e maiúsculas, com debounce de 120ms.
-  - Exatamente 2 letras (ex.: `pe`) são tratadas como **sigla de UF**, com casamento exato. Isso evita que "pe" traga "Pereira".
-  - Qualquer outro termo busca por trecho em nome, número, partido, UF e nome do estado (`pernambuco`, `sao paulo`).
-- **Chips de cargo:** combinam com a busca (E lógico). "Todos" remove o filtro.
+- **Busca:** ignora acentos e maiúsculas, com debounce de 120ms. Procura por trecho em
+  **nome e nome completo**.
+  - Termo **só de dígitos** casa o número **por prefixo**, não por pedaço. O número de urna
+    é hierárquico: `13` é o PT, `1301` uma federal do PT, `13000` uma estadual. Então `13`
+    devolve exatamente as 1.045 candidaturas do PT, e não também o `25130` de outro partido.
+- **Filtros:** 13 facetas. Dentro da mesma faceta os valores **somam** (OU); entre facetas
+  eles **cruzam** (E).
 - **Carregar mais:** mostra 12 por vez e o botão exibe quantos faltam. Ao carregar, o foco do teclado vai para o primeiro card novo. Qualquer mudança de filtro volta aos 12 primeiros.
-- **Estado vazio:** mensagem com dica ("Tente a sigla do estado…").
+- **Estado vazio:** a mensagem muda conforme o motivo — filtros demais, ou busca sem
+  resultado (e aí lembra que estado e partido são filtros, não busca).
 - **Erro ao carregar o JSON:** mensagem "Não foi possível carregar a lista".
-- **URL:** busca e cargo são refletidos em `?q=` e `&cargo=` (via `replaceState`) e lidos ao abrir a página.
+- **URL:** busca e todas as facetas viram parâmetros, via `replaceState`, e são lidos ao abrir.
+  Valores de uma faceta separados por `|`. Os alternadores usam `1`/`0` em vez de repetir o
+  rótulo inteiro codificado (`?recomendacao=1`, `?indigena=1`, `?quilombola=1`). Links
+  antigos no formato `?cargo=senado` continuam funcionando.
 - **Carregamento em três etapas** (pensado para internet instável):
   1. A página desenha **esqueletos** de card assim que o HTML chega — nada espera a rede.
   2. Se houver cópia no *Cache Storage*, ela é exibida na hora, antes de qualquer resposta da rede.
   3. O `fetch` (com `cache: 'no-cache'`) revalida em segundo plano, atualiza o cache e repinta —
-     mas **só se o conteúdo mudou**, comparando `atualizado_em` + total de registros. Assim uma
-     revalidação não apaga a busca que o visitante já digitou.
+     mas **só se o conteúdo mudou**, comparando o **ETag** da resposta da rede com o da cópia
+     guardada (e caindo no `Last-Modified` se o servidor não mandar ETag). Assim uma revalidação
+     não zera o "carregar mais" que o visitante já usou.
   - Se a rede falhar e já houver lista do cache na tela, o erro é silencioso. A mensagem de erro
     só aparece quando não há nada para mostrar.
   - Edições continuam aparecendo sem o visitante limpar o cache: o `no-cache` da etapa 3 garante isso.
+
+  > A comparação **era** `atualizado_em` + total de registros, e isso tinha um furo sério: marcar
+  > um destaque, escrever uma proposta ou acrescentar um campo não mexe em nenhum dos dois, então
+  > a cópia nova era descartada como "igual" e quem tinha a lista em cache ficava preso na versão
+  > velha indefinidamente. Só aparecia em conexão lenta — justo onde o cache serve para alguma
+  > coisa, porque é o único caso em que ele ganha a corrida da rede. O ETag é content-based e o
+  > `_headers` já serve `/candidatos.json` com `max-age=0, must-revalidate`, então ele sempre vem.
+  > Sem carimbo nenhum o código repinta: perder a paginação é menos grave que servir lista velha.
 
 ---
 
@@ -208,7 +273,11 @@ python3 -m http.server 8000   # e abrir http://localhost:8000
 ## 9. Acessibilidade (já implementado — manter)
 
 - `<label>` no campo de busca, `role="search"` no formulário.
-- Chips são `<button>` com `aria-pressed`.
+- Facetas são `<details>`/`<summary>` nativos, navegáveis por teclado sem JS.
+- O seletor de povo indígena segue o padrão *combobox* da WAI-ARIA: `role="combobox"` com
+  `aria-expanded` e `aria-controls` no campo, `role="listbox"`/`role="option"` na lista,
+  `aria-activedescendant` acompanhando as setas, e Enter, Esc e Backspace ligados.
+- A gaveta do celular fecha no Esc e devolve o foco ao botão que a abriu.
 - Contagem com `aria-live="polite"`, para que leitores de tela anunciem o total ao filtrar.
 - Links externos com `aria-label` dizendo que abrem em nova aba.
 - Alvos de toque de pelo menos 44px. Contraste AA (por isso o selo do partido usa verde-escuro, não o verde da bandeira).
@@ -222,7 +291,7 @@ python3 -m http.server 8000   # e abrir http://localhost:8000
 - [x] Lista real carregada do Portal de Dados Abertos do TSE (3.789 candidaturas de PDT, PCdoB, PSOL, PT, PV, REDE, PCB, PSTU, UP e PCO). Ver seção 11.
 - [x] Links do TSE: URL individual de cada candidatura no DivulgaCandContas (ver seção 11).
 - [x] Pasta `fotos/` com as 3.789 fotos oficiais do TSE (~31 MB; os arquivos já vêm com ~8 KB, não precisaram de otimização).
-- [ ] Marcar os `destaque: true` (hoje estão todos em `false`).
+- [ ] Marcar os `destaque: true` — o selo RECOMENDAÇÃO do card e a faceta "Recomendação do site".
 - [ ] Preencher o campo `proposta`: o TSE não publica texto de proposta, só PDFs de plano de governo para as majoritárias.
 - [ ] GitHub Action para validar o `candidatos.json` a cada commit (ex.: `python -m json.tool candidatos.json` ou `jq . candidatos.json`), bloqueando deploy com JSON quebrado.
 - [ ] Imagem de compartilhamento (`og:image`, 1200×630) com a identidade do hero, mais o favicon.
@@ -243,6 +312,12 @@ Gerado a partir do **Portal de Dados Abertos do TSE**, conjunto *Candidatos - 20
 | `nome_completo` | `NM_CANDIDATO` |
 | `numero`, `uf`, `cargo`, `partido` | `NR_CANDIDATO`, `SG_UF`, `DS_CARGO`, `SG_PARTIDO` |
 | `sexo`, `etnia`, `instrucao` | `DS_GENERO`, `DS_COR_RACA`, `DS_GRAU_INSTRUCAO` |
+| `idade` | calculada de `DT_NASCIMENTO` na data do 1º turno (04/10/2026). **Não** é o `NR_IDADE_DATA_POSSE` do conjunto complementar: aquele é a idade em 1º de janeiro de 2027 e sai um ano mais velho em 2.130 das candidaturas |
+| `ocupacao` | `DS_OCUPACAO` agrupada. O TSE tem 168 valores, de `ADVOGADO` a `ENGRAXATE` — inutilizável como filtro. Cada um cai em um de 17 grupos (ver abaixo) |
+| `ocupacao_declarada` | a `DS_OCUPACAO` crua, só passada para caixa de frase como o resto do arquivo (`ADVOGADO` → `Advogado`). O site não usa hoje; fica para o card mostrar "Professor de ensino médio" em vez do grupo "Educação", e para recruzar sem voltar ao CSV |
+| `federacao` | de `SG_FEDERACAO`. Três valores: `Brasil da Esperança (PT, PCdoB, PV)` 1.401 · `PSOL e REDE` 1.028 · `Sem federação` 1.360 (PDT, UP, PCO, PSTU, PCB) |
+| `quilombola` | `ST_QUILOMBOLA` (complementar), booleano. 81 candidaturas |
+| `povo` | `DS_ETNIA_INDIGENA` (complementar). 90 candidaturas em 46 povos — Guarani Kaiowá 9, Makuxí 8, Mundurukú 5… `NÃO INFORMADA`, `#NULO`, `MAL DEFINIDAS` e `NÃO DETERMINADA` viram string vazia: são ausência de dado, não um povo. Todas as 90 têm `etnia` = Indígena; 15 indígenas não declararam povo |
 | `patrimonio` | soma de `VR_BEM_CANDIDATO` (bem_candidato) |
 | `situacao` | `DS_SITUACAO_JULGAMENTO` (consulta_cand_complementar) — filtra a lista e gera o aviso do card |
 | `rede` | `DS_URL` (rede_social_candidato), 1 por candidatura |
@@ -251,7 +326,34 @@ Gerado a partir do **Portal de Dados Abertos do TSE**, conjunto *Candidatos - 20
 | `sq` | `SQ_CANDIDATO`, identificador da candidatura no TSE. O site ignora; serve para recruzar dados |
 | `proposta` | **não vem do TSE** — fica vazio, para preenchimento manual |
 | *orientação sexual, identidade de gênero* | **não estão nos dados abertos.** O DivulgaCandContas mostra os dois na página de cada candidatura, mas nenhum conjunto do portal publica esses campos |
-| `destaque` | **não vem do TSE** — todos em `false`, para curadoria manual |
+| `destaque` | **não vem do TSE** — curadoria manual. Vira o selo RECOMENDAÇÃO no card |
+
+### Os grupos de ocupação
+
+Como o recorte de partidos, o agrupamento das 168 ocupações do TSE é curadoria
+autoral, não classificação oficial. A regra é a primeira que casar, então a ordem
+importa: `APOSENTADO (EXCETO SERVIDOR PÚBLICO)` precisa ser testado antes de
+`SERVIDOR P`, e `ATLETA PROFISSIONAL E TÉCNICO EM DESPORTOS` antes de `TÉCNICO E`.
+
+| Grupo | Candidaturas |
+|---|---|
+| Mandato e serviço público | 623 |
+| Outros / não informado (o `OUTROS` do próprio TSE) | 547 |
+| Educação | 464 |
+| Comércio e empresariado | 383 |
+| Direito | 269 |
+| Trabalho urbano e serviços (o que sobra: motorista, garçom, pedreiro, faxineiro, cabeleireiro…) | 241 |
+| Saúde | 221 |
+| Economia, gestão e finanças | 186 |
+| Comunicação, arte e cultura | 174 |
+| Estudante | 170 |
+| Aposentado | 158 |
+| Campo, pesca e agropecuária | 131 |
+| Ciências, tecnologia e engenharia | 101 |
+| Segurança e forças armadas | 75 |
+| Dona ou dono de casa | 29 |
+| Religioso | 11 |
+| Esporte | 6 |
 
 ### O link do DivulgaCandContas
 
@@ -277,7 +379,7 @@ estadual. Se o site mudar, o conserto é remontar a partir do campo `sq` de cada
 - **Partidos:** PDT, PCdoB, PSOL, PT, PV, REDE, PCB, PSTU, UP e PCO.
 - **Cargos:** presidência, governo, senado, dep. federal, estadual e distrital.
   Vice-governador, vice-presidente e suplentes de senador **ficaram de fora**: não têm
-  número próprio de votação e o site não tem chip para eles.
+  número próprio de votação e o site não tem faceta para eles.
 - **Rede social:** quando há mais de uma, escolhe na ordem Instagram → Facebook → X →
   TikTok → YouTube → Threads → outras. Descarta WhatsApp (é telefone pessoal), endereços
   digitados errado (`instagram@fulano`, `instagram.c`) e domínios-sósia (`nstagram.com`).

@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Vote Esquerda — Candidaturas 2026</title>
-<meta name="description" content="Encontre candidatas e candidatos do campo progressista nas eleições de 2026. Busque por nome, número, partido ou estado.">
+<meta name="description" content="Encontre candidatas e candidatos do campo progressista nas eleições de 2026. Busque pelo nome ou pelo número e filtre por cargo, estado, partido, federação e perfil.">
 <meta property="og:title" content="Vote Esquerda — Candidaturas 2026">
-<meta property="og:description" content="Busque por nome, número, partido ou estado.">
+<meta property="og:description" content="Busque pelo nome ou pelo número e filtre por cargo, estado, partido e perfil.">
 <meta name="theme-color" content="#0B1A33">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Cpath%20d='M32%2064%20L-40.00%2064.00%20A72%2072%200%200%201%20-32.87%2032.76%20Z'%20fill='%23009C3B'/%3E%3Cpath%20d='M32%2064%20L-32.87%2032.76%20A72%2072%200%200%201%20-12.89%207.71%20Z'%20fill='%23FFDF00'/%3E%3Cpath%20d='M32%2064%20L-12.89%207.71%20A72%2072%200%200%201%2015.98%20-6.19%20Z'%20fill='%23009C3B'/%3E%3Cpath%20d='M32%2064%20L15.98%20-6.19%20A72%2072%200%200%201%2048.02%20-6.19%20Z'%20fill='%23FFDF00'/%3E%3Cpath%20d='M32%2064%20L48.02%20-6.19%20A72%2072%200%200%201%2076.89%207.71%20Z'%20fill='%23009C3B'/%3E%3Cpath%20d='M32%2064%20L76.89%207.71%20A72%2072%200%200%201%2096.87%2032.76%20Z'%20fill='%23FFDF00'/%3E%3Cpath%20d='M32%2064%20L96.87%2032.76%20A72%2072%200%200%201%20104.00%2064.00%20Z'%20fill='%23009C3B'/%3E%3Ccircle%20cx='32'%20cy='54'%20r='22.5'%20fill='%23F6F4EC'/%3E%3Ccircle%20cx='32'%20cy='54'%20r='20'%20fill='%23002776'/%3E%3C/svg%3E">
 <link rel="preload" href="fontes/public-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
@@ -56,22 +56,92 @@ a{color:var(--vermelho)} a:hover{color:var(--vermelho-escuro)}
 .faixa{background:var(--marinho);padding:8px 16px 40px;display:flex;flex-direction:column;align-items:center;gap:16px}
 .faixa h1{margin:0;font-family:var(--display);font-size:clamp(44px,7vw,88px);line-height:1;color:var(--vermelho);text-align:center;letter-spacing:-1px}
 .faixa p{margin:0;font-size:clamp(16px,1.6vw,20px);color:#E8ECF4;text-align:center;max-width:720px}
-.busca{width:100%;max-width:820px;display:flex;flex-direction:column;gap:8px}
-.busca label{font-size:14px;font-weight:700;color:var(--vermelho-claro)}
-.campo{display:flex;align-items:center;gap:12px;background:var(--branco);border:4px solid var(--vermelho);padding:0 8px 0 16px;height:64px}
-.campo input{flex:1;min-width:0;border:0;outline:none;font:inherit;font-size:clamp(17px,2vw,22px);color:var(--texto);background:transparent;height:100%}
+
+/* PAINEL — busca e filtros moram juntos aqui, e so aqui. O topo da pagina nao
+   tem controle nenhum: o visitante tem um lugar so para procurar. */
+.painel{background:var(--branco);border:2px solid var(--marinho);display:flex;flex-direction:column;
+  position:sticky;top:16px;max-height:calc(100vh - 32px);min-height:0}
+.painel-topo{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-shrink:0;
+  padding:10px 12px;background:var(--marinho);color:var(--branco)}
+.painel-topo strong{font-family:var(--display);font-size:14px;font-weight:400;letter-spacing:.5px;white-space:nowrap}
+.zerar{min-height:34px;padding:0 10px;flex-shrink:0;white-space:nowrap;border:2px solid var(--vermelho-claro);
+  background:transparent;color:var(--vermelho-claro);font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.zerar:hover{background:var(--vermelho-claro);color:var(--marinho)}
+.zerar[hidden]{display:none}
+/* A busca fica fora da area rolavel: ela e o primeiro recurso de quem ja sabe
+   em quem quer votar, e nao pode sumir quando o visitante rola as facetas. */
+.busca{flex-shrink:0;padding:12px;border-bottom:2px solid var(--marinho)}
+.campo{display:flex;align-items:center;gap:10px;background:var(--branco);border:3px solid var(--vermelho);padding:0 4px 0 10px;height:50px}
+.campo input{flex:1;min-width:0;border:0;outline:none;font:inherit;font-size:16px;color:var(--texto);background:transparent;height:100%}
 .campo input::placeholder{color:#5B6475}
 .campo input::-webkit-search-cancel-button{display:none}
-.limpar{min-height:44px;padding:0 12px;border:0;background:var(--fundo);color:var(--marinho);font:inherit;font-size:15px;font-weight:700;cursor:pointer}
-.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
-.chip{min-height:44px;padding:0 16px;font:inherit;font-size:15px;font-weight:700;cursor:pointer;border:2px solid var(--vermelho);background:transparent;color:var(--branco)}
-.chip[aria-pressed="true"]{background:var(--vermelho);border-color:var(--vermelho);color:var(--branco)}
+.limpar{min-height:40px;padding:0 10px;border:0;background:var(--fundo);color:var(--marinho);font:inherit;font-size:14px;font-weight:700;cursor:pointer}
+.limpar[hidden]{display:none}
+.painel-lista{overflow-y:auto;flex:1;min-height:0}
+
+/* Faceta: <details> nativo, abre e fecha sem JS e ja vem acessivel pelo teclado */
+.faceta{border-bottom:2px solid var(--marinho)}
+.faceta:last-child{border-bottom:0}
+.faceta > summary{display:flex;align-items:center;gap:8px;min-height:48px;padding:0 12px;cursor:pointer;
+  font-size:15px;font-weight:700;list-style:none}
+.faceta > summary::-webkit-details-marker{display:none}  /* o triangulo padrao do Safari */
+.faceta > summary::after{content:'+';margin-left:auto;font-family:var(--display);font-size:17px;line-height:1}
+.faceta[open] > summary::after{content:'\2013'}
+.faceta[open] > summary{background:var(--fundo)}
+.selo{min-width:22px;height:22px;padding:0 6px;display:inline-flex;align-items:center;justify-content:center;
+  background:var(--vermelho);color:var(--branco);font-size:12px;font-weight:700;line-height:1}
+.selo[hidden]{display:none}
+.valores{max-height:224px;overflow-y:auto;padding:4px 12px 10px}
+.valor{display:flex;align-items:center;gap:10px;min-height:38px;font-size:14px;line-height:1.25;cursor:pointer}
+.valor input{width:18px;height:18px;flex-shrink:0;margin:0;accent-color:var(--vermelho);cursor:pointer}
+.valor .q{margin-left:auto;padding-left:8px;font-size:12px;font-weight:700;color:var(--texto-3);font-variant-numeric:tabular-nums}
+/* Valor que nao sobrou ninguem desbota em vez de sumir: a lista nao encolhe e
+   cresce a cada clique, entao o visitante nao perde o lugar. */
+.valor.vazia{opacity:.38}
+.valor.vazia input{cursor:not-allowed}
+/* Faceta de um valor so (quilombola): um acordeao para um item seria um clique a toa */
+.alternador{display:flex;align-items:center;gap:10px;min-height:48px;padding:0 12px;cursor:pointer;
+  border-bottom:2px solid var(--marinho);font-size:14px;font-weight:700}
+.alternador input{width:18px;height:18px;flex-shrink:0;margin:0;accent-color:var(--vermelho);cursor:pointer}
+.alternador .q{margin-left:auto;font-size:12px;color:var(--texto-3);font-variant-numeric:tabular-nums}
+
+/* Seletor com busca: 46 povos indigenas em lista de marcacao seria rolagem sem
+   fim, e quase todos tem uma candidatura so. Aqui o visitante digita, e o que
+   escolhe vira ficha dentro do proprio campo. */
+.combo{padding:10px 12px 12px}
+.combo-campo{display:flex;flex-wrap:wrap;align-items:center;gap:6px;min-height:46px;padding:6px;
+  background:var(--branco);border:2px solid var(--marinho);cursor:text}
+.combo-campo:focus-within{outline:3px solid var(--azul);outline-offset:1px}
+.combo-ficha{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 4px 0 9px;
+  background:var(--amarelo);color:var(--marinho);font-size:13px;font-weight:700}
+.combo-ficha button{width:24px;height:24px;flex-shrink:0;padding:0;border:0;background:var(--marinho);
+  color:var(--amarelo);font:inherit;font-size:14px;line-height:1;cursor:pointer}
+.combo-ficha button:hover{background:var(--vermelho)}
+.combo-campo input{flex:1;min-width:80px;height:30px;border:0;outline:none;background:transparent;
+  font:inherit;font-size:14px;color:var(--texto)}
+.combo-lista{list-style:none;margin:8px 0 0;padding:0;max-height:200px;overflow-y:auto;
+  background:var(--branco);border:2px solid var(--marinho)}
+.combo-lista[hidden]{display:none}
+.combo-lista li{display:flex;align-items:center;gap:8px;min-height:40px;padding:0 10px;font-size:14px;cursor:pointer}
+.combo-lista li .q{margin-left:auto;padding-left:8px;font-size:12px;font-weight:700;color:var(--texto-3);font-variant-numeric:tabular-nums}
+.combo-lista li.escolhida{font-weight:700}
+.combo-lista li.vazia{opacity:.38}
+.combo-lista li.ativa{background:var(--marinho);color:var(--branco)}
+.combo-lista li.ativa .q{color:var(--amarelo)}
+.combo-nada{padding:12px 10px;font-size:14px;color:var(--texto-3)}
 
 /* RESULTADOS */
-main{max-width:1280px;margin:0 auto;padding:32px 16px}
+/* 1780px e nao os 1280px de antes: o painel come 326px da largura util, e em
+   1280 sobrava grade para duas colunas de 451px — card esticado e tela vazia dos
+   dois lados. Em 1780 cabem quatro colunas de 340px. */
+main{max-width:1780px;margin:0 auto;padding:32px 16px;
+  display:grid;grid-template-columns:300px minmax(0,1fr);gap:26px;align-items:start}
 .cabecalho{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:20px}
 .cabecalho h2{margin:0;font-family:var(--display);font-size:clamp(22px,2.4vw,28px)}
-.grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;list-style:none;margin:0;padding:0}
+/* 340px e o piso do card, nao um palpite: "Candidatura no TSE" mede 141px e a
+   linha de links divide o card em duas metades iguais, entao abaixo de 320px o
+   rotulo quebra em duas linhas. 340 deixa folga para a fonte de reserva. */
+.grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:20px;list-style:none;margin:0;padding:0}
 .vazio,.erro{padding:40px 20px;background:var(--branco);border:2px dashed #9AA3B5;text-align:center;font-size:18px}
 .card{background:var(--branco);border:2px solid var(--marinho);display:flex;flex-direction:column;height:100%}
 /* O flex:1 fica aqui, nao no .proposta. A grade estica todos os cards da fileira
@@ -88,7 +158,7 @@ main{max-width:1280px;margin:0 auto;padding:32px 16px}
 .partido-bloco{align-self:flex-start;margin-top:6px;display:flex;flex-direction:column;gap:3px}
 .logo-partido{height:24px;width:auto;max-width:140px;object-fit:contain;display:block}
 .partido-sigla{font-size:12px;font-weight:700;letter-spacing:.5px;color:var(--texto-2)}
-.selo-destaque{align-self:flex-start;margin-bottom:2px;padding:2px 8px;background:var(--marinho);color:var(--amarelo);font-size:11px;font-weight:700;letter-spacing:1px}
+.selo-recomendacao{align-self:flex-start;margin-bottom:2px;padding:2px 8px;background:var(--marinho);color:var(--amarelo);font-size:11px;font-weight:700;letter-spacing:1px}
 .numero{display:flex;flex-direction:column;gap:2px;padding:10px 18px 12px;background:var(--amarelo)}
 .numero small{font-size:13px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;line-height:1.3}
 .numero strong{align-self:flex-end;font-family:var(--display);font-size:40px;line-height:1;letter-spacing:2px;font-weight:400}
@@ -117,12 +187,12 @@ main{max-width:1280px;margin:0 auto;padding:32px 16px}
   font-family:var(--display);font-size:18px;letter-spacing:1px;cursor:pointer}
 .mais:hover{background:var(--vermelho-escuro);border-color:var(--vermelho-escuro)}
 footer{background:var(--marinho);color:#E8ECF4;padding:24px 16px;font-size:14px}
-footer div{max-width:1280px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+footer div{max-width:1780px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
 footer strong{font-family:var(--display);color:var(--vermelho-claro);font-size:18px;font-weight:400}
 footer a{color:var(--vermelho-claro)}
 footer .aviso{flex-direction:column;align-items:flex-start;gap:4px;justify-content:flex-start;margin-top:14px;padding-top:14px;border-top:1px solid #2A3550;font-size:13px;line-height:1.5;color:#C3CBD9}
 /* <details> nativo: abre e fecha sem JS e ja vem acessivel pelo teclado. */
-.sobre{max-width:1280px;margin:14px auto 0;padding-top:14px;border-top:1px solid #2A3550}
+.sobre{max-width:1780px;margin:14px auto 0;padding-top:14px;border-top:1px solid #2A3550}
 .sobre summary{display:flex;align-items:center;gap:10px;min-height:44px;cursor:pointer;
   font-size:14px;font-weight:700;color:var(--vermelho-claro);list-style:none}
 .sobre summary::-webkit-details-marker{display:none}  /* o triangulo padrao do Safari */
@@ -131,6 +201,30 @@ footer .aviso{flex-direction:column;align-items:flex-start;gap:4px;justify-conte
 .sobre p{margin:0 0 10px;font-size:13px;line-height:1.6;color:#C3CBD9}
 .sobre p:last-child{margin-bottom:4px}
 .sobre .criador{margin-top:14px;padding-top:12px;border-top:1px solid #2A3550;font-weight:700;color:#E8ECF4}
+/* No celular o painel vira gaveta de tela inteira. Nao da para deixar a coluna
+   fixa: ela sozinha ja ocuparia a altura da tela antes do primeiro card. */
+.abrir-painel,.painel-fechar{display:none}
+/* Notebook de 1366: com o painel em 300px sobra grade para duas colunas, e o card
+   estica para 487px. Em 240px cabem tres de 341px — rotulo longo de faceta quebra
+   em duas linhas, que e mais barato do que perder um terco dos cards por fileira. */
+@media (min-width:901px) and (max-width:1439px){
+  main{grid-template-columns:240px minmax(0,1fr);gap:16px}
+  .painel-topo{padding:10px 10px}
+  .painel-topo strong{font-size:12px;letter-spacing:0}
+  .valores,.combo{padding-left:10px;padding-right:10px}
+  .faceta > summary,.alternador{padding:0 10px}
+}
+@media (max-width:900px){
+  main{grid-template-columns:minmax(0,1fr)}
+  .abrir-painel{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:54px;
+    margin-bottom:20px;border:3px solid var(--vermelho);background:var(--branco);color:var(--marinho);
+    font-family:var(--display);font-size:16px;letter-spacing:1px;cursor:pointer}
+  .abrir-painel .selo{background:var(--vermelho)}
+  .painel{display:none;position:fixed;inset:0;z-index:30;max-height:none;border:0;border-top:4px solid var(--vermelho)}
+  .painel.aberto{display:flex}
+  .painel-fechar{display:block;flex-shrink:0;width:100%;min-height:56px;border:0;background:var(--vermelho);
+    color:var(--branco);font-family:var(--display);font-size:17px;letter-spacing:1px;cursor:pointer}
+}
 @media (max-width:480px){ .numero strong{font-size:34px} .foto{width:68px;height:68px;font-size:22px} }
 @media (prefers-reduced-motion:no-preference){ .card{animation:entra .25s ease-out both} @keyframes entra{from{opacity:0;transform:translateY(6px)}} }
 </style>
@@ -148,25 +242,39 @@ footer .aviso{flex-direction:column;align-items:flex-start;gap:4px;justify-conte
 
 <section class="faixa">
   <h1>VOTE ESQUERDA</h1>
-  <p>Encontre candidatas e candidatos do campo progressista no seu estado. Busque por nome, número, partido ou UF.</p>
-  <form class="busca" role="search" onsubmit="return false">
-    <label for="busca">Buscar candidato</label>
-    <div class="campo">
-      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0B1A33" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
-      <input id="busca" type="search" autocomplete="off" enterkeyhint="search" placeholder="Ex.: PE, PSOL, Maria, 1350…">
-      <button type="button" class="limpar" id="limpar" hidden>Limpar</button>
-    </div>
-    <div class="chips" id="chips" role="group" aria-label="Filtrar por cargo"></div>
-  </form>
+  <p>Encontre candidatas e candidatos do campo progressista nas eleições de 2026. Busque pelo nome ou pelo número e filtre por cargo, estado, partido e perfil.</p>
 </section>
 
 <main>
-  <div class="cabecalho">
-    <h2 id="contagem" aria-live="polite">Carregando…</h2>
+  <button type="button" class="abrir-painel" id="abrirPainel" aria-controls="painel" aria-expanded="false">
+    BUSCAR E FILTRAR<span class="selo" id="seloMobile" hidden>0</span>
+  </button>
+
+  <aside class="painel" id="painel" aria-label="Buscar e filtrar">
+    <div class="painel-topo">
+      <strong>BUSCAR E FILTRAR</strong>
+      <button type="button" class="zerar" id="zerar" hidden>Limpar</button>
+    </div>
+    <form class="busca" role="search" onsubmit="return false">
+      <label for="busca" class="sr-only">Buscar por nome ou número</label>
+      <div class="campo">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0B1A33" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
+        <input id="busca" type="search" autocomplete="off" enterkeyhint="search" placeholder="Nome ou número">
+        <button type="button" class="limpar" id="limpar" hidden>Limpar</button>
+      </div>
+    </form>
+    <div class="painel-lista" id="facetas"></div>
+    <button type="button" class="painel-fechar" id="fecharPainel">VER RESULTADOS</button>
+  </aside>
+
+  <div class="resultados">
+    <div class="cabecalho">
+      <h2 id="contagem" aria-live="polite">Carregando…</h2>
+    </div>
+    <div id="mensagem"></div>
+    <ul class="grade" id="grade"></ul>
+    <button type="button" class="mais" id="mais" hidden>CARREGAR MAIS</button>
   </div>
-  <div id="mensagem"></div>
-  <ul class="grade" id="grade"></ul>
-  <button type="button" class="mais" id="mais" hidden>CARREGAR MAIS</button>
 </main>
 
 <footer>
@@ -195,7 +303,7 @@ footer .aviso{flex-direction:column;align-items:flex-start;gap:4px;justify-conte
   var ARQUIVO = 'candidatos.json';
   var POR_PAGINA = 12;   // 12 em vez de 24: metade das requisicoes de foto no primeiro paint
   var UFS = {AC:'Acre',AL:'Alagoas',AP:'Amapá',AM:'Amazonas',BA:'Bahia',CE:'Ceará',DF:'Distrito Federal',ES:'Espírito Santo',GO:'Goiás',MA:'Maranhão',MT:'Mato Grosso',MS:'Mato Grosso do Sul',MG:'Minas Gerais',PA:'Pará',PB:'Paraíba',PR:'Paraná',PE:'Pernambuco',PI:'Piauí',RJ:'Rio de Janeiro',RN:'Rio Grande do Norte',RS:'Rio Grande do Sul',RO:'Rondônia',RR:'Roraima',SC:'Santa Catarina',SP:'São Paulo',SE:'Sergipe',TO:'Tocantins',BR:'Brasil'};
-  // Categorias de cargo: a ordem define a ordem dos chips e da lista
+  // Categorias de cargo: a ordem define a ordem da faceta e da lista de resultados
   var CATEGORIAS = [
     {id:'presidencia', label:'Presidência', re:/presid/},
     {id:'governo',     label:'Governo',     re:/govern/},
@@ -203,14 +311,65 @@ footer .aviso{flex-direction:column;align-items:flex-start;gap:4px;justify-conte
     {id:'federal',     label:'Dep. Federal', re:/federal/},
     {id:'estadual',    label:'Dep. Estadual/Distrital', re:/estadual|distrital/}
   ];
+  var OUTRO_CARGO = 'Outros';
+
+  // Ordem fixa dos valores de algumas facetas. Escolaridade vai da menor para a
+  // maior e patrimonio do menor para o maior: ordenar por quantidade ali faria a
+  // lista parecer aleatoria.
+  var ORDEM = {
+    cargo:      CATEGORIAS.map(function (c) { return c.label; }).concat([OUTRO_CARGO]),
+    idade:      ['Até 29 anos','30 a 39 anos','40 a 49 anos','50 a 59 anos','60 a 69 anos','70 anos ou mais'],
+    instrucao:  ['Lê e escreve','Ensino fundamental incompleto','Ensino fundamental completo','Ensino médio incompleto','Ensino médio completo','Superior incompleto','Superior completo'],
+    patrimonio: ['Sem bens declarados','Até R$ 50 mil','R$ 50 mil a R$ 200 mil','R$ 200 mil a R$ 1 milhão','Acima de R$ 1 milhão']
+  };
+
+  // As facetas, na ordem em que aparecem no painel.
+  //   campo  propriedade do registro que guarda o valor
+  //   ordem  'fixa' usa ORDEM[id]; 'quantidade' ordena pelo total; senao, pelo rotulo
+  //   tipo   'alternador' = valor unico, vira uma marcacao direta sem acordeao
+  //          'busca'      = seletor com campo de texto e fichas (ver montarCombo)
+  // No JSON o campo continua `destaque` — e o dado. Na tela ele se chama
+  // recomendacao, que e o que a marcacao quer dizer para quem le.
+  var RECOMENDACAO = 'Recomendação do site';
+  var INDIGENA = 'Candidatura indígena';
+  var FACETAS = [
+    {id:'recomendacao', label:'Recomendação', campo:'recLabel',   ordem:'rotulo', tipo:'alternador'},
+    {id:'cargo',      label:'Cargo',          campo:'cargoLabel', ordem:'fixa'},
+    {id:'uf',         label:'Estado',         campo:'uf',         ordem:'rotulo',
+     rotulo:function (v) { return UFS[v] || v; }},
+    {id:'partido',    label:'Partido',        campo:'partido',    ordem:'quantidade'},
+    // "Sem federação" fica de fora: a faceta serve para quem quer votar numa
+    // federação, nao para recortar os cinco partidos que concorrem sozinhos —
+    // para esses ja existe a faceta de partido.
+    {id:'federacao',  label:'Federação',      campo:'federacao',  ordem:'quantidade',
+     excluir:['Sem federação']},
+    {id:'sexo',       label:'Gênero',         campo:'sexo',       ordem:'rotulo'},
+    {id:'etnia',      label:'Cor ou raça',    campo:'etnia',      ordem:'quantidade'},
+    {id:'idade',      label:'Idade',          campo:'faixaIdade', ordem:'fixa'},
+    {id:'instrucao',  label:'Escolaridade',   campo:'instrucao',  ordem:'fixa'},
+    {id:'ocupacao',   label:'Ocupação',       campo:'ocupacao',   ordem:'quantidade'},
+    {id:'patrimonio', label:'Patrimônio',     campo:'patr',       ordem:'fixa'},
+    // Os tres marcadores de identidade ficam juntos no pe do painel. O de
+    // candidatura indigena cobre as 105 — inclusive as 15 que nao declararam
+    // povo, e que por isso nao aparecem no seletor abaixo.
+    {id:'indigena',   label:'Indígena',       campo:'indigena',   ordem:'rotulo', tipo:'alternador'},
+    {id:'povo',       label:'Povo indígena',  campo:'povo',       ordem:'quantidade', tipo:'busca',
+     dica:'Buscar povo…'},
+    {id:'quilombola', label:'Quilombola',     campo:'quilomb',    ordem:'rotulo', tipo:'alternador'}
+  ];
 
   // ---- Estado ----
-  var todos = [], filtrados = [], mostrando = 0, cargo = 'todos', temDest = false;
+  var todos = [], filtrados = [], mostrando = 0;
+  // sel[faceta] = valores marcados. Vazio quer dizer "nao filtra por isso".
+  var sel = {}, VALORES = {};
+  FACETAS.forEach(function (f) { sel[f.id] = []; VALORES[f.id] = []; });
 
   // ---- Elementos ----
   var $ = function (id) { return document.getElementById(id); };
-  var input = $('busca'), btnLimpar = $('limpar'), chips = $('chips'), grade = $('grade'),
-      contagem = $('contagem'), mensagem = $('mensagem'), btnMais = $('mais');
+  var input = $('busca'), btnLimpar = $('limpar'), grade = $('grade'),
+      contagem = $('contagem'), mensagem = $('mensagem'), btnMais = $('mais'),
+      facetasEl = $('facetas'), painel = $('painel'), btnZerar = $('zerar'),
+      btnAbrir = $('abrirPainel'), btnFechar = $('fecharPainel'), seloMobile = $('seloMobile');
 
   function norm(s) {
     return String(s == null ? '' : s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
@@ -232,6 +391,98 @@ footer .aviso{flex-direction:column;align-items:flex-start;gap:4px;justify-conte
   function iniciais(nome) {
     var p = String(nome || '?').trim().split(/\s+/);
     return ((p[0] || '?')[0] + (p.length > 1 ? p[p.length - 1][0] : '')).toUpperCase();
+  }
+
+  // ---- Motor de facetas ----
+  function faixaIdade(a) {
+    var n = parseInt(a, 10);
+    if (!n) return '';
+    if (n < 30) return ORDEM.idade[0];
+    if (n < 40) return ORDEM.idade[1];
+    if (n < 50) return ORDEM.idade[2];
+    if (n < 60) return ORDEM.idade[3];
+    if (n < 70) return ORDEM.idade[4];
+    return ORDEM.idade[5];
+  }
+  function faixaPatrimonio(v) {
+    var n = typeof v === 'number' ? v : parseFloat(v);
+    if (!(n > 0)) return ORDEM.patrimonio[0];   // o TSE registra 0 para quem nao declarou bens
+    if (n < 5e4) return ORDEM.patrimonio[1];
+    if (n < 2e5) return ORDEM.patrimonio[2];
+    if (n < 1e6) return ORDEM.patrimonio[3];
+    return ORDEM.patrimonio[4];
+  }
+  function rotulo(f, v) { return f.rotulo ? f.rotulo(v) : v; }
+
+  // Levanta os valores de cada faceta uma vez, sobre a lista inteira. A ordem
+  // nao muda conforme o visitante filtra: lista que se reordena sozinha e lista
+  // em que ninguem acha de novo o que acabou de ver.
+  function montarValores() {
+    FACETAS.forEach(function (f) {
+      var n = {};
+      todos.forEach(function (c) { var v = c[f.campo]; if (v) n[v] = (n[v] || 0) + 1; });
+      var vs = Object.keys(n).filter(function (v) {
+        return !f.excluir || f.excluir.indexOf(v) < 0;
+      });
+      if (f.ordem === 'fixa') vs.sort(function (a, b) { return ORDEM[f.id].indexOf(a) - ORDEM[f.id].indexOf(b); });
+      else if (f.ordem === 'quantidade') vs.sort(function (a, b) { return n[b] - n[a] || a.localeCompare(b, 'pt-BR'); });
+      else vs.sort(function (a, b) { return rotulo(f, a).localeCompare(rotulo(f, b), 'pt-BR'); });
+      VALORES[f.id] = vs;
+    });
+  }
+
+  // A busca por texto cobre so nome, nome completo e numero. Partido e estado
+  // sairam dela de proposito: agora tem faceta propria, e era justamente o campo
+  // que fazia tudo ao mesmo tempo que confundia quem digitava.
+  var SO_DIGITOS = /^\d+$/;
+  function passaTexto(c, q) {
+    if (!q) return true;
+    // Numero de urna e hierarquico: 13 e o PT, 1301 uma federal do PT, 13000 uma
+    // estadual. Por isso digito casa por prefixo, nao por pedaco — "13" devolve
+    // as 1.045 candidaturas do PT, e nao tambem o 25130 de outro partido.
+    if (SO_DIGITOS.test(q)) return c.numero.indexOf(q) === 0;
+    return c.busca.indexOf(q) >= 0;
+  }
+  // Marcar dois valores na mesma faceta soma (PSOL ou PT); facetas diferentes se
+  // cruzam (PSOL e mulher). `pular` deixa uma faceta de fora do teste — e assim
+  // que se conta quantos resultados cada opcao daria sem ela se auto-zerar.
+  function passaFacetas(c, pular) {
+    for (var i = 0; i < FACETAS.length; i++) {
+      if (i === pular) continue;
+      var e = sel[FACETAS[i].id];
+      if (e.length && e.indexOf(c[FACETAS[i].campo]) < 0) return false;
+    }
+    return true;
+  }
+  function nFiltros() {
+    var n = 0;
+    FACETAS.forEach(function (f) { n += sel[f.id].length; });
+    return n;
+  }
+  function contagens() {
+    var q = norm(input.value), r = {};
+    FACETAS.forEach(function (f) { r[f.id] = {}; });
+    todos.forEach(function (c) {
+      if (!passaTexto(c, q)) return;
+      for (var i = 0; i < FACETAS.length; i++) {
+        if (!passaFacetas(c, i)) continue;
+        var v = c[FACETAS[i].campo];
+        if (v) r[FACETAS[i].id][v] = (r[FACETAS[i].id][v] || 0) + 1;
+      }
+    });
+    return r;
+  }
+  function alternar(fid, v) {
+    var a = sel[fid], i = a.indexOf(v);
+    if (i >= 0) a.splice(i, 1); else a.push(v);
+    aplicar();
+  }
+  function limparTudo() {
+    FACETAS.forEach(function (f) { sel[f.id] = []; });
+    input.value = '';
+    combos.forEach(function (c) { c.input.value = ''; fecharCombo(c); });
+    aplicar();
+    input.focus();
   }
 
   // ---- Carregamento ----
@@ -257,24 +508,47 @@ footer .aviso{flex-direction:column;align-items:flex-start;gap:4px;justify-conte
     grade.appendChild(frag);
   }
 
-  function processar(dados) {
+  // Identifica o conteudo pelo ETag que veio na propria resposta (ou, se o
+  // servidor nao mandar ETag, pelo Last-Modified). Antes a identificacao era
+  // `atualizado_em` + numero de registros, e nenhum dos dois muda quando se
+  // marca um destaque, se escreve uma proposta ou se acrescenta um campo: a
+  // copia da rede era descartada como "igual" e quem tinha a lista em cache
+  // ficava preso na versao velha. So aparecia em conexao lenta, justo onde o
+  // cache serve para alguma coisa. O /candidatos.json e servido com
+  // `max-age=0, must-revalidate` (ver _headers), entao o ETag sempre vem.
+  function carimbo(resposta) {
+    return resposta.headers.get('etag') || resposta.headers.get('last-modified') || '';
+  }
+
+  function processar(dados, marca) {
     var lista = Array.isArray(dados) ? dados : (dados.candidatos || []);
     // Se a rede devolveu o mesmo conteudo que ja esta na tela, nao repinta: repintar
-    // zeraria a busca digitada, os chips e o "carregar mais" que o visitante ja usou.
-    var v = String(dados.atualizado_em || '') + '|' + lista.length;
-    if (pronto && v === versao) return;
-    versao = v;
+    // zera o "carregar mais" que o visitante ja usou. Sem carimbo nenhum, repinta:
+    // perder a paginacao e menos grave que servir lista velha.
+    if (pronto && marca && marca === versao) return;
+    versao = marca;
     todos = lista.filter(function (c) { return c && c.nome && c.numero; }).map(function (c) {
       var uf = String(c.uf || '').toUpperCase();
+      var i = categoria(c.cargo);
       return {
         nome: String(c.nome), numero: String(c.numero), uf: uf, cargo: String(c.cargo || ''),
         partido: String(c.partido || ''), proposta: String(c.proposta || '').trim(),
         foto: c.foto ? String(c.foto) : '', rede: linkSeguro(c.rede), tse: linkSeguro(c.tse),
-        cat: categoria(c.cargo), dest: c.destaque === true,
+        cat: i, cargoLabel: (CATEGORIAS[i] || {}).label || OUTRO_CARGO,
+        dest: c.destaque === true,
+        recLabel: c.destaque === true ? RECOMENDACAO : '',
         completo: String(c.nome_completo || ''),
         situacao: String(c.situacao || '').trim(),
         indef: /indeferid/i.test(String(c.situacao || '')),
-        busca: norm([c.nome, c.nome_completo, c.numero, c.partido, uf, UFS[uf]].join(' | '))
+        sexo: String(c.sexo || ''), etnia: String(c.etnia || ''),
+        instrucao: String(c.instrucao || ''), ocupacao: String(c.ocupacao || ''),
+        federacao: String(c.federacao || ''), povo: String(c.povo || ''),
+        // Os marcadores so entram como "sim": ninguem procura quem nao e quilombola
+        quilomb: c.quilombola === true ? 'Candidatura quilombola' : '',
+        indigena: c.etnia === 'Indígena' ? INDIGENA : '',
+        faixaIdade: faixaIdade(c.idade), patr: faixaPatrimonio(c.patrimonio),
+        // So os nomes: o numero e tratado a parte, por prefixo (ver passaTexto)
+        busca: norm([c.nome, c.nome_completo].join(' | '))
       };
     }).sort(function (a, b) {
       // Registro indeferido afunda antes de qualquer outro criterio, inclusive do
@@ -283,21 +557,25 @@ footer .aviso{flex-direction:column;align-items:flex-start;gap:4px;justify-conte
           || (b.dest ? 1 : 0) - (a.dest ? 1 : 0)
           || a.cat - b.cat || a.uf.localeCompare(b.uf) || a.nome.localeCompare(b.nome, 'pt-BR');
     });
-    temDest = todos.some(function (c) { return c.dest; });
-    chips.textContent = '';
-    montarChips();
+    montarValores();
+    montarPainel();
     if (!pronto) lerURL();   // a URL so manda na primeira pintura
     pronto = true;
     aplicar();
   }
 
   // O cache fica no Cache Storage, nao no localStorage: o arquivo passa de 2 MB
-  // cru e o localStorage costuma estourar em 5 MB no total.
+  // cru e o localStorage costuma estourar em 5 MB no total. Guardar a Response
+  // inteira, e nao so o JSON, e o que permite reler o carimbo dela depois.
   function lerCache() {
     if (!window.caches) return Promise.reject();
     return caches.open(CACHE)
       .then(function (c) { return c.match(ARQUIVO); })
-      .then(function (r) { return r ? r.json() : Promise.reject(); });
+      .then(function (r) {
+        if (!r) return Promise.reject();
+        var marca = carimbo(r);
+        return r.json().then(function (dados) { return { dados: dados, marca: marca }; });
+      });
   }
   function gravarCache(resposta) {
     if (!window.caches) return;
@@ -306,17 +584,18 @@ footer .aviso{flex-direction:column;align-items:flex-start;gap:4px;justify-conte
 
   esqueleto(POR_PAGINA);
 
-  lerCache().then(function (dados) {
-    if (!daRede) processar(dados);          // a rede pode ter chegado antes
+  lerCache().then(function (p) {
+    if (!daRede) processar(p.dados, p.marca);   // a rede pode ter chegado antes
   })['catch'](function () {});
 
   fetch(ARQUIVO, { cache: 'no-cache' })
     .then(function (r) {
       if (!r.ok) throw new Error(r.status);
       gravarCache(r.clone());
-      return r.json();
+      var marca = carimbo(r);
+      return r.json().then(function (dados) { return { dados: dados, marca: marca }; });
     })
-    .then(function (dados) { daRede = true; processar(dados); })
+    .then(function (p) { daRede = true; processar(p.dados, p.marca); })
     ['catch'](function () {
       if (pronto) return;   // ja tem lista do cache na tela: nao assusta o visitante
       grade.textContent = '';
@@ -325,43 +604,244 @@ footer .aviso{flex-direction:column;align-items:flex-start;gap:4px;justify-conte
       mensagem.textContent = 'Tente recarregar a página em alguns instantes.';
     });
 
-  // ---- Filtros ----
-  function montarChips() {
-    var presentes = {};
-    todos.forEach(function (c) { presentes[c.cat] = true; });
-    var opcoes = [{ id: 'todos', label: 'Todos' }].concat(CATEGORIAS.filter(function (_, i) { return presentes[i]; }));
-    opcoes.forEach(function (o) {
-      var b = el('button', 'chip', o.label);
-      b.type = 'button'; b.dataset.id = o.id;
-      b.addEventListener('click', function () { cargo = o.id; aplicar(); });
-      chips.appendChild(b);
+  // ---- Painel de filtros ----
+  // Guarda os nos criados uma vez, para que repintar seja so atualizar numero e
+  // estado de marcacao. Recriar os elementos a cada clique tiraria o foco do
+  // teclado de quem esta navegando pela lista.
+  var marcas = {}, linhas = {}, numeros = {}, selos = {}, combos = [];
+
+  function montarPainel() {
+    facetasEl.textContent = '';
+    combos = [];
+    FACETAS.forEach(function (f) {
+      marcas[f.id] = {}; linhas[f.id] = {}; numeros[f.id] = {};
+      if (f.tipo === 'alternador') return facetasEl.appendChild(montarAlternador(f));
+      var d = document.createElement('details');
+      d.className = 'faceta';
+      d.open = f.aberta === true;
+      var s = document.createElement('summary');
+      s.appendChild(el('span', null, f.label));
+      selos[f.id] = el('span', 'selo', '0');
+      selos[f.id].hidden = true;
+      s.appendChild(selos[f.id]);
+      d.appendChild(s);
+      d.appendChild(f.tipo === 'busca' ? montarCombo(f) : montarMarcacoes(f));
+      facetasEl.appendChild(d);
     });
+  }
+
+  // Lista de caixas de marcacao: o formato padrao das facetas.
+  function montarMarcacoes(f) {
+    var caixa = el('div', 'valores');
+    VALORES[f.id].forEach(function (v) {
+      var linha = el('label', 'valor');
+      var cx = document.createElement('input');
+      cx.type = 'checkbox';
+      cx.addEventListener('change', function () { alternar(f.id, v); });
+      var q = el('span', 'q', '0');
+      linha.appendChild(cx);
+      linha.appendChild(el('span', null, rotulo(f, v)));
+      linha.appendChild(q);
+      marcas[f.id][v] = cx; linhas[f.id][v] = linha; numeros[f.id][v] = q;
+      caixa.appendChild(linha);
+    });
+    return caixa;
+  }
+
+  // Faceta de valor unico: marcacao direta, sem acordeao em volta.
+  function montarAlternador(f) {
+    var v = VALORES[f.id][0];
+    if (!v) return document.createDocumentFragment();
+    var linha = el('label', 'alternador');
+    var cx = document.createElement('input');
+    cx.type = 'checkbox';
+    cx.addEventListener('change', function () { alternar(f.id, v); });
+    var q = el('span', 'q', '0');
+    linha.appendChild(cx);
+    linha.appendChild(el('span', null, rotulo(f, v)));
+    linha.appendChild(q);
+    marcas[f.id][v] = cx; linhas[f.id][v] = linha; numeros[f.id][v] = q;
+    return linha;
+  }
+
+  // Seletor com busca (padrao combobox da WAI-ARIA): campo de texto que filtra a
+  // lista, o escolhido vira ficha dentro do proprio campo. Para o povo indigena,
+  // que tem 46 valores e quase todos com uma candidatura so, marcar numa lista
+  // rolante seria procurar agulha no palheiro.
+  function montarCombo(f) {
+    var caixa = el('div', 'combo');
+    var campo = el('div', 'combo-campo');
+    var txt = document.createElement('input');
+    txt.type = 'text';
+    txt.id = 'combo-' + f.id;
+    txt.placeholder = f.dica || 'Buscar…';
+    txt.autocomplete = 'off';
+    txt.setAttribute('role', 'combobox');
+    txt.setAttribute('aria-expanded', 'false');
+    txt.setAttribute('aria-controls', 'lista-' + f.id);
+    txt.setAttribute('aria-autocomplete', 'list');
+    txt.setAttribute('aria-label', f.label);
+    var lista = document.createElement('ul');
+    lista.className = 'combo-lista';
+    lista.id = 'lista-' + f.id;
+    lista.setAttribute('role', 'listbox');
+    lista.setAttribute('aria-label', f.label);
+    lista.hidden = true;
+    campo.appendChild(txt);
+    caixa.appendChild(campo);
+    caixa.appendChild(lista);
+
+    var c = { f: f, campo: campo, input: txt, lista: lista, itens: [], ativo: -1 };
+    combos.push(c);
+
+    campo.addEventListener('click', function (ev) { if (ev.target === campo) txt.focus(); });
+    txt.addEventListener('focus', function () { abrirCombo(c); });
+    txt.addEventListener('input', function () { abrirCombo(c); c.ativo = -1; pintarCombo(c, contagens()); });
+    txt.addEventListener('blur', function () {
+      // Sem o atraso, o blur fecha a lista antes do clique no item chegar.
+      setTimeout(function () { fecharCombo(c); }, 160);
+    });
+    txt.addEventListener('keydown', function (ev) {
+      if (ev.key === 'ArrowDown' || ev.key === 'ArrowUp') {
+        ev.preventDefault();
+        if (!c.itens.length) return;
+        abrirCombo(c);
+        c.ativo = (c.ativo + (ev.key === 'ArrowDown' ? 1 : c.itens.length - 1)) % c.itens.length;
+        pintarCombo(c, contagens());
+      } else if (ev.key === 'Enter') {
+        ev.preventDefault();
+        if (c.ativo >= 0 && c.itens[c.ativo]) escolherNoCombo(c, c.itens[c.ativo]);
+      } else if (ev.key === 'Escape') {  // 1o Esc limpa o que foi digitado, 2o fecha
+        if (txt.value) { txt.value = ''; pintarCombo(c, contagens()); } else fecharCombo(c);
+      } else if (ev.key === 'Backspace' && !txt.value && sel[f.id].length) {
+        alternar(f.id, sel[f.id][sel[f.id].length - 1]);
+      }
+    });
+    return caixa;
+  }
+
+  function abrirCombo(c) {
+    c.lista.hidden = false;
+    c.input.setAttribute('aria-expanded', 'true');
+  }
+  function fecharCombo(c) {
+    c.lista.hidden = true;
+    c.ativo = -1;
+    c.input.setAttribute('aria-expanded', 'false');
+    c.input.removeAttribute('aria-activedescendant');
+  }
+  // `item` e {v, n, marcado}. Opcao que nao sobrou ninguem nao e escolhivel,
+  // igual a caixa desabilitada das outras facetas — so que aqui ela segue
+  // visivel, para o visitante ver que o povo existe mas nao cabe neste recorte.
+  function escolherNoCombo(c, item) {
+    if (!item.n && !item.marcado) return;
+    c.input.value = '';
+    c.ativo = -1;
+    alternar(c.f.id, item.v);
+    c.input.focus();
+  }
+
+  function pintarCombo(c, cnt) {
+    var f = c.f, q = norm(c.input.value), i;
+    // Fichas: apaga so as antigas e reinsere antes do campo de texto, que nunca
+    // e recriado — recriar perderia o foco no meio da digitacao.
+    var velhas = c.campo.querySelectorAll('.combo-ficha');
+    for (i = velhas.length - 1; i >= 0; i--) c.campo.removeChild(velhas[i]);
+    sel[f.id].forEach(function (v) {
+      var fi = el('span', 'combo-ficha');
+      fi.appendChild(el('span', null, rotulo(f, v)));
+      var x = el('button', null, '×');
+      x.type = 'button';
+      x.setAttribute('aria-label', 'Remover ' + rotulo(f, v));
+      x.addEventListener('mousedown', function (ev) { ev.preventDefault(); });  // nao rouba o foco
+      x.addEventListener('click', function () { alternar(f.id, v); });
+      fi.appendChild(x);
+      c.campo.insertBefore(fi, c.input);
+    });
+
+    c.itens = VALORES[f.id].filter(function (v) {
+      return !q || norm(rotulo(f, v)).indexOf(q) >= 0;
+    }).map(function (v) {
+      return { v: v, n: cnt[f.id][v] || 0, marcado: sel[f.id].indexOf(v) >= 0 };
+    }).sort(function (a, b) {
+      // Quem tem candidatura no recorte atual sobe. Com MS marcado, os povos de
+      // MS vem primeiro — e so aqui a ordem se mexe conforme o filtro, porque e
+      // uma lista que se percorre lendo, nao uma em que se guarda a posicao.
+      return (b.n > 0 ? 1 : 0) - (a.n > 0 ? 1 : 0)
+          || b.n - a.n
+          || rotulo(f, a.v).localeCompare(rotulo(f, b.v), 'pt-BR');
+    });
+    if (c.ativo >= c.itens.length) c.ativo = -1;
+    c.lista.textContent = '';
+    if (!c.itens.length) {
+      var nada = el('li', 'combo-nada', 'Nenhum resultado para “' + c.input.value + '”');
+      nada.setAttribute('role', 'presentation');
+      c.lista.appendChild(nada);
+      c.input.removeAttribute('aria-activedescendant');
+      return;
+    }
+    c.itens.forEach(function (item, k) {
+      var escolhivel = item.n || item.marcado;
+      var li = el('li');
+      li.id = 'opt-' + f.id + '-' + k;
+      li.setAttribute('role', 'option');
+      li.setAttribute('aria-selected', item.marcado ? 'true' : 'false');
+      if (!escolhivel) li.setAttribute('aria-disabled', 'true');
+      li.className = (item.marcado ? 'escolhida ' : '') + (escolhivel ? '' : 'vazia ') + (k === c.ativo ? 'ativa' : '');
+      li.appendChild(el('span', null, (item.marcado ? '✓ ' : '') + rotulo(f, item.v)));
+      li.appendChild(el('span', 'q', item.n));
+      li.addEventListener('mousedown', function (ev) { ev.preventDefault(); });  // nao rouba o foco do campo
+      li.addEventListener('click', function () { escolherNoCombo(c, item); });
+      c.lista.appendChild(li);
+    });
+    if (c.ativo >= 0) c.input.setAttribute('aria-activedescendant', 'opt-' + f.id + '-' + c.ativo);
+    else c.input.removeAttribute('aria-activedescendant');
+  }
+
+  function pintarPainel() {
+    var cnt = contagens(), total = nFiltros();
+    FACETAS.forEach(function (f) {
+      if (f.tipo !== 'busca') {
+        VALORES[f.id].forEach(function (v) {
+          var n = cnt[f.id][v] || 0, marcado = sel[f.id].indexOf(v) >= 0;
+          if (!marcas[f.id][v]) return;
+          numeros[f.id][v].textContent = n;
+          marcas[f.id][v].checked = marcado;
+          marcas[f.id][v].disabled = !n && !marcado;
+          linhas[f.id][v].className = (f.tipo === 'alternador' ? 'alternador' : 'valor') + (!n && !marcado ? ' vazia' : '');
+        });
+      }
+      var k = sel[f.id].length;
+      if (selos[f.id]) { selos[f.id].hidden = !k; selos[f.id].textContent = k; }
+    });
+    combos.forEach(function (c) { pintarCombo(c, cnt); });
+    btnZerar.hidden = !total && !input.value;
+    seloMobile.hidden = !total;
+    seloMobile.textContent = total;
+    btnFechar.textContent = 'VER ' + filtrados.length + (filtrados.length === 1 ? ' CANDIDATURA' : ' CANDIDATURAS');
   }
 
   function aplicar() {
     var q = norm(input.value);
-    var idxCat = CATEGORIAS.findIndex(function (c) { return c.id === cargo; });
-    // Estado inicial (sem busca, sem filtro de cargo): mostra so os destaques
-    var soDest = temDest && !q && cargo === 'todos';
     filtrados = todos.filter(function (c) {
-      if (soDest && !c.dest) return false;
-      if (idxCat >= 0 && c.cat !== idxCat) return false;
-      if (!q) return true;
-      // 2 letras só viram busca por estado se forem uma UF real; senão cai no texto (PT, PL, PV...)
-      if (q.length === 2 && UFS[q.toUpperCase()]) return norm(c.uf) === q;
-      return c.busca.indexOf(q) >= 0;
+      return passaFacetas(c, -1) && passaTexto(c, q);
     });
-    Array.prototype.forEach.call(chips.children, function (b) { b.setAttribute('aria-pressed', b.dataset.id === cargo ? 'true' : 'false'); });
     btnLimpar.hidden = !input.value;
     grade.textContent = ''; mostrando = 0;
     var n = filtrados.length;
-    contagem.textContent = soDest ? n + (n === 1 ? ' destaque' : ' destaques')
-                                  : n + (n === 1 ? ' candidatura' : ' candidaturas');
+    // "recomendacoes" so quando e o unico recorte em jogo; com outro filtro
+    // junto, "candidaturas" e o que descreve a lista.
+    var soRec = sel.recomendacao.length && nFiltros() === 1 && !q;
+    contagem.textContent = soRec ? n + (n === 1 ? ' recomendação' : ' recomendações')
+                                 : n + (n === 1 ? ' candidatura' : ' candidaturas');
     if (n === 0) {
       mensagem.className = 'vazio';
-      mensagem.textContent = 'Nenhum candidato encontrado' + (input.value ? ' para “' + input.value + '”' : '') + '. Tente a sigla do estado (ex.: SP) ou o número.';
+      mensagem.textContent = nFiltros()
+        ? 'Nenhuma candidatura combina todos os filtros. Tente remover um deles.'
+        : 'Nenhum candidato encontrado' + (input.value ? ' para “' + input.value + '”' : '') + '. A busca procura por nome e por número — para estado ou partido, use os filtros.';
     } else { mensagem.className = ''; mensagem.textContent = ''; }
     renderMais();
+    pintarPainel();
     escreverURL();
   }
 
@@ -390,7 +870,7 @@ footer .aviso{flex-direction:column;align-items:flex-start;gap:4px;justify-conte
       foto.appendChild(img);
     } else { foto.textContent = ini; foto.setAttribute('aria-hidden', 'true'); }
     var info = el('div', 'info');
-    if (c.dest) info.appendChild(el('span', 'selo-destaque', 'DESTAQUE'));
+    if (c.dest) info.appendChild(el('span', 'selo-recomendacao', 'RECOMENDAÇÃO'));
     info.appendChild(el('h3', 'nome', c.nome));
     // A linha do nome completo e sempre criada, mesmo vazia: reservar a altura
     // evita que quem tem nome de urna igual ao completo fique uma linha mais
@@ -458,17 +938,34 @@ footer .aviso{flex-direction:column;align-items:flex-start;gap:4px;justify-conte
     return a;
   }
 
-  // ---- URL compartilhável: ?q=PE&cargo=senado ----
+  // ---- URL compartilhável: ?q=maria&uf=PE&partido=PSOL|PT ----
+  // Cada faceta vira um parametro, com os valores separados por "|". Assim um
+  // recorte montado no painel ("mulheres negras do PSOL em PE") vira um link.
   function lerURL() {
     var p = new URLSearchParams(location.search);
     if (p.get('q')) input.value = p.get('q');
-    var c = p.get('cargo');
-    if (c && CATEGORIAS.some(function (x) { return x.id === c; })) cargo = c;
+    FACETAS.forEach(function (f) {
+      var v = p.get(f.id);
+      if (!v) return;
+      // Alternador tem um valor so, entao vale ?quilombola=1 em vez de repetir o
+      // rotulo inteiro codificado na barra de enderecos.
+      if (f.tipo === 'alternador') sel[f.id] = VALORES[f.id].slice(0, 1);
+      // Descarta valor que nao existe mais: link velho nao pode zerar a lista
+      else sel[f.id] = v.split('|').filter(function (x) { return VALORES[f.id].indexOf(x) >= 0; });
+    });
+    // Compatibilidade com os links antigos, de quando cargo era ?cargo=senado
+    var antigo = p.get('cargo');
+    if (antigo && !sel.cargo.length) {
+      CATEGORIAS.forEach(function (c) { if (c.id === antigo) sel.cargo = [c.label]; });
+    }
   }
   function escreverURL() {
     var p = new URLSearchParams();
     if (input.value) p.set('q', input.value);
-    if (cargo !== 'todos') p.set('cargo', cargo);
+    FACETAS.forEach(function (f) {
+      if (!sel[f.id].length) return;
+      p.set(f.id, f.tipo === 'alternador' ? '1' : sel[f.id].join('|'));
+    });
     var s = p.toString();
     history.replaceState(null, '', s ? '?' + s : location.pathname);
   }
@@ -477,11 +974,32 @@ footer .aviso{flex-direction:column;align-items:flex-start;gap:4px;justify-conte
   var t;
   input.addEventListener('input', function () { clearTimeout(t); t = setTimeout(aplicar, 120); });
   btnLimpar.addEventListener('click', function () { input.value = ''; aplicar(); input.focus(); });
+  btnZerar.addEventListener('click', limparTudo);
   btnMais.addEventListener('click', function () {
     var primeiroNovo = mostrando;
     renderMais();
     var novo = grade.children[primeiroNovo];
     if (novo) { var a = novo.querySelector('a'); if (a) a.focus({ preventScroll: true }); }
+  });
+
+  // No celular o painel e uma gaveta de tela inteira. Travar a rolagem do corpo
+  // evita que o fundo role atras dela quando a lista de facetas chega ao fim.
+  function abrirGaveta() {
+    painel.classList.add('aberto');
+    btnAbrir.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+    input.focus();
+  }
+  function fecharGaveta() {
+    painel.classList.remove('aberto');
+    btnAbrir.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+    btnAbrir.focus();
+  }
+  btnAbrir.addEventListener('click', abrirGaveta);
+  btnFechar.addEventListener('click', fecharGaveta);
+  document.addEventListener('keydown', function (ev) {
+    if (ev.key === 'Escape' && painel.classList.contains('aberto')) fecharGaveta();
   });
 })();
 </script>
