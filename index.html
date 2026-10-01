@@ -179,6 +179,18 @@ main{max-width:1780px;margin:0 auto;padding:32px 16px;
 .proposta{padding:16px 18px;font-size:15px;line-height:1.5;color:#1F2638}
 .proposta b{display:block;font-size:12px;letter-spacing:1px;color:var(--verde-escuro);margin-bottom:4px}
 .proposta:empty{padding:0}
+/* Informacoes da candidatura: o que alimenta os filtros, dentro do card */
+.infos{border-top:2px solid var(--marinho)}
+.infos > summary{display:flex;align-items:center;gap:8px;min-height:44px;padding:0 18px;cursor:pointer;
+  font-size:13px;font-weight:700;letter-spacing:.3px;color:var(--texto-2);list-style:none}
+.infos > summary::-webkit-details-marker{display:none}  /* o triangulo padrao do Safari */
+.infos > summary::after{content:'+';margin-left:auto;font-family:var(--display);font-size:15px;line-height:1}
+.infos[open] > summary::after{content:'\2013'}
+.infos[open] > summary{background:var(--fundo)}
+.infos dl{margin:0;padding:4px 18px 14px;display:grid;grid-template-columns:auto 1fr;
+  gap:7px 14px;font-size:13px;line-height:1.35}
+.infos dt{font-weight:700;color:var(--texto-2)}
+.infos dd{margin:0;color:var(--texto)}
 .links{display:flex;border-top:2px solid var(--marinho)}
 .links a,.links span{flex:1;min-height:48px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:15px;font-weight:700;text-decoration:none;padding:0 8px;text-align:center}
 .links > * + *{border-left:2px solid var(--marinho)}
@@ -542,6 +554,12 @@ footer .aviso{flex-direction:column;align-items:flex-start;gap:4px;justify-conte
         indef: /indeferid/i.test(String(c.situacao || '')),
         sexo: String(c.sexo || ''), etnia: String(c.etnia || ''),
         instrucao: String(c.instrucao || ''), ocupacao: String(c.ocupacao || ''),
+        // Estes dois nao filtram nada — sao para o bloco "Informações da
+        // candidatura" do card. A ocupacao declarada diz "Professor de ensino
+        // médio", bem mais util de ler que o grupo "Educação" do filtro.
+        ocupDecl: String(c.ocupacao_declarada || ''),
+        idade: parseInt(c.idade, 10) || 0,
+        patrimonio: typeof c.patrimonio === 'number' ? c.patrimonio : parseFloat(c.patrimonio) || 0,
         federacao: String(c.federacao || ''), povo: String(c.povo || ''),
         // Os marcadores so entram como "sim": ninguem procura quem nao e quilombola
         quilomb: c.quilombola === true ? 'Candidatura quilombola' : '',
@@ -902,11 +920,63 @@ footer .aviso{flex-direction:column;align-items:flex-start;gap:4px;justify-conte
     if (c.proposta) { prop.appendChild(el('b', null, 'PROPOSTA')); prop.appendChild(el('span', null, c.proposta)); }
     art.appendChild(prop);
 
+    art.appendChild(informacoes(c));
+
     var links = el('div', 'links');
     links.appendChild(link(c.rede, 'Rede social', c.nome));
     links.appendChild(link(c.tse, 'Candidatura no TSE', c.nome));
     art.appendChild(links);
     return li;
+  }
+
+  // Bloco expansivel com o que alimenta os filtros. Fechado o card fica como
+  // estava; aberto, quem chegou ali por um filtro ("mulheres negras do PSOL")
+  // enxerga de onde aquilo saiu, sem precisar abrir a pagina do TSE.
+  // <details> nativo: abre sem JS e ja vem acessivel pelo teclado.
+  function informacoes(c) {
+    var d = document.createElement('details');
+    d.className = 'infos';
+    var s = document.createElement('summary');
+    // Concorda com o genero da candidatura. "candidatura" e a reserva para o caso
+    // de `sexo` vir vazio — o JSON e editado a mao, entao o campo pode faltar.
+    var fem = c.sexo === 'Feminino', masc = c.sexo === 'Masculino';
+    s.appendChild(el('span', null, fem ? 'Informações da candidata'
+                                 : masc ? 'Informações do candidato'
+                                        : 'Informações da candidatura'));
+    // O nome so para quem usa leitor de tela: sem ele, uma lista de 12 cards
+    // anuncia doze vezes o mesmo rotulo. Fica depois do texto visivel, que
+    // continua sendo o inicio do nome acessivel.
+    s.appendChild(el('span', 'sr-only', (fem || masc ? ' ' : ' de ') + c.nome));
+    d.appendChild(s);
+
+    var dl = document.createElement('dl');
+    function linha(rotulo, valor) {
+      if (!valor) return;
+      dl.appendChild(el('dt', null, rotulo));
+      dl.appendChild(el('dd', null, valor));
+    }
+    linha('Federação', c.federacao);
+    linha('Idade', c.idade ? c.idade + ' anos' : '');
+    linha('Gênero', c.sexo);
+    linha('Cor ou raça', c.etnia);
+    linha('Povo indígena', c.povo);
+    linha('Quilombola', c.quilomb ? 'Sim' : '');
+    linha('Escolaridade', c.instrucao);
+    linha('Ocupação', c.ocupDecl || c.ocupacao);
+    linha('Patrimônio', dinheiro(c.patrimonio));
+    d.appendChild(dl);
+    return d;
+  }
+
+  // O TSE registra 0 para quem nao declarou bens — nao e patrimonio zero, e
+  // ausencia de declaracao, e o texto precisa dizer isso.
+  function dinheiro(v) {
+    if (!(v > 0)) return 'Sem bens declarados';
+    try {
+      return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    } catch (e) {
+      return 'R$ ' + v.toFixed(2);
+    }
   }
   // Logo do partido: tenta logos/<sigla>.svg, depois .png, e cai no nome se não houver arquivo.
   function marcaPartido(partido) {

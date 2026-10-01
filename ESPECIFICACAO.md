@@ -115,7 +115,25 @@ Estrutura da página, de cima para baixo:
 3. Faixa amarela com "VOTE" e o **número em destaque** (Archivo Black, 40px).
 4. **Aviso de situação**, só quando `situacao` não está vazio: candidatura sub judice.
 5. Proposta, ou "Proposta ainda não cadastrada." se o campo estiver vazio.
-6. Dois links que abrem em nova aba: **Rede social** e **Candidatura no TSE**. Se o link não existir, o texto aparece em cinza, sem link.
+6. **"Informações da candidata" / "do candidato"** — `<details>` fechado, com o que alimenta os filtros:
+   federação, idade, gênero, cor ou raça, povo indígena, quilombola, escolaridade, ocupação
+   e patrimônio. Quem chegou ali por um filtro ("mulheres negras do PSOL") enxerga de onde
+   aquilo saiu, sem abrir a página do TSE.
+   - Linha que não tem dado **não é criada** — povo e quilombola só aparecem em quem os tem.
+   - A ocupação mostrada é a **declarada** (`ocupacao_declarada`), não o grupo do filtro:
+     "Torneiro mecânico" diz muito mais que "Trabalho urbano e serviços".
+   - Patrimônio em reais (`toLocaleString('pt-BR')`). Valor 0 vira **"Sem bens declarados"** —
+     no TSE isso é ausência de declaração, não patrimônio zero, e o texto precisa dizer isso.
+   - O rótulo **concorda com o gênero** (`sexo`), como já acontece no cargo ("Senadora · PE"
+     no card de "Informações da candidata"). Se `sexo` vier ausente, vazio ou com valor
+     inesperado, cai em **"Informações da candidatura"** — o JSON é editado à mão.
+   - O `<summary>` leva o nome da candidatura num `.sr-only` depois do texto visível: sem
+     isso, uma lista de 12 cards anuncia doze vezes o mesmo rótulo para quem usa leitor de
+     tela. O texto visível continua sendo o início do nome acessível (WCAG 2.5.3).
+   - Abrir um card **estica a fileira inteira**: a grade iguala as alturas e a folga vai para
+     a área da foto dos vizinhos, pelo `flex:1` do `.card-topo`. Se incomodar, `align-items:start`
+     na `.grade` resolve, ao custo de fileiras com a base irregular.
+7. Dois links que abrem em nova aba: **Rede social** e **Candidatura no TSE**. Se o link não existir, o texto aparece em cinza, sem link.
 
 ### Responsivo
 - Celular (até 900px): o painel vira **gaveta de tela inteira**, atrás de um botão
