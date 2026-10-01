@@ -42555,7 +42555,7 @@
     {
       "nome": "Keka Bagno",
       "nome_completo": "Clementina Araújo Bagno da Silva",
-      "destaque": false,
+      "destaque": true,
       "numero": "50123",
       "uf": "DF",
       "cargo": "Deputada Distrital",
@@ -52255,7 +52255,7 @@
     {
       "nome": "Nerivaldo Machado Monteiro",
       "nome_completo": "Nerivaldo de Jesus Machado Monteiro",
-      "destaque": false,
+      "destaque": true,
       "numero": "50131",
       "uf": "MA",
       "cargo": "Deputado Estadual",
@@ -79305,7 +79305,7 @@
     {
       "nome": "Camila Valadão",
       "nome_completo": "Camila Costa Valadão",
-      "destaque": false,
+      "destaque": true,
       "numero": "50180",
       "uf": "ES",
       "cargo": "Deputada Estadual",
@@ -92955,7 +92955,7 @@
     {
       "nome": "Débora Camilo",
       "nome_completo": "Debora Alves Camilo",
-      "destaque": false,
+      "destaque": true,
       "numero": "50500",
       "uf": "SP",
       "cargo": "Deputada Estadual",
