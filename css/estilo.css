@@ -198,7 +198,7 @@ footer .aviso{flex-direction:column;align-items:flex-start;gap:4px;justify-conte
 .sobre[open] summary::before{content:'–'}
 .sobre p{margin:0 0 10px;font-size:13px;line-height:1.6;color:#C3CBD9}
 .sobre p:last-child{margin-bottom:4px}
-.sobre .criador{margin-top:14px;padding-top:12px;border-top:1px solid #2A3550;font-weight:700;color:#E8ECF4}
+.sobre .criador{margin:14px 0 2px;padding-top:12px;border-top:1px solid #2A3550;font-weight:700;color:#E8ECF4}
 /* No celular o painel vira gaveta de tela inteira. Nao da para deixar a coluna
    fixa: ela sozinha ja ocuparia a altura da tela antes do primeiro card. */
 .abrir-painel,.painel-fechar{display:none}
