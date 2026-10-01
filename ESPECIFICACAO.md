@@ -301,6 +301,11 @@ de cards virava obstáculo para quem não queria procurar ninguém.
   no nome de urna **e no nome completo**.
 - **Clicar no campo já abre a lista**, antes de digitar qualquer coisa: para a maioria das
   vagas isso responde "quem eu posso escolher aqui?" de primeira.
+- **A primeira entrada é sempre deixar em branco:** *"Você também pode deixar em branco para
+  preencher à mão depois, clicando aqui"*. Ela não mexe em nada — a vaga já está vazia — só
+  fecha a lista e leva para o próximo cargo. Serve para quem não escolheu ninguém ali e vai
+  completar na caneta, e aparece **em todas as vagas, inclusive filtrando**. Fundo creme e
+  borda separando das candidaturas, para não se confundir com uma delas.
 - Cada opção mostra **nome de urna, nome completo, partido, estado e número**. O nome completo
   está ali porque a busca também procura nele — sem isso, digitar "silva" devolveria gente
   cujo nome de urna não tem "silva" nenhum, e o resultado pareceria aleatório.
@@ -311,10 +316,16 @@ de cards virava obstáculo para quem não queria procurar ninguém.
   linha própria, em vermelho: o card avisa, e quem escolhe pela vaga não passa pelo card.
 - Mostra **8 por vez**, com o rodapé dizendo quantas existem (`Mostrando 8 de 65 — digite o
   nome ou o número.`).
-- Teclado: setas percorrem, **Enter escolhe** (e com uma opção só escolhe direto, que é o
-  caminho de quem digitou o número inteiro), 1º Esc limpa o texto, 2º fecha. Depois de
-  escolher, o foco cai na **próxima vaga vazia** — dá para montar a colinha inteira sem tirar
-  a mão do teclado. Na última vaga, vai para o `×` dela.
+- Teclado: setas percorrem (a 1ª seta com a lista fechada abre **e já marca** a primeira
+  entrada), **Enter escolhe**, 1º Esc limpa o texto, 2º fecha. Com **uma candidatura só**,
+  Enter escolhe ela direto sem precisar descer a seta — é o caminho de quem digitou o número
+  inteiro, e por isso o atalho conta candidaturas, não entradas: a de deixar em branco está
+  sempre na frente.
+- Depois de escolher (ou de deixar em branco), o foco cai na **próxima vaga vazia e já abre a
+  lista dela** — dá para montar a colinha inteira sem tirar a mão do teclado. Isso é feito
+  explicitamente, não como efeito colateral do evento de foco. Na última vaga o foco vai para
+  o `×` dela, e se ela ficou em branco o `×` está escondido, então o foco fica no próprio
+  campo em vez de se perder no corpo da página.
 - Só **uma lista aberta por vez**. Depender do `blur` não basta: no celular ele nem sempre
   chega antes do toque na vaga seguinte, e duas listas abertas se sobrepõem.
 
@@ -369,6 +380,31 @@ navegador.** Formato: `{"v":1,"vagas":{"presidente":"<sq>", …}}`.
 - O que volta do `localStorage` é conferido contra a lista recém-carregada (`conferirColinha`):
   cada vaga precisa ter candidatura existente, do cargo certo, sem repetir pessoa e toda do
   mesmo estado. O conteúdo é editável pelo visitante, então nada ali pode ser pressuposto.
+
+### A chave da foto
+
+Uma chave liga/desliga acima dos botões: **"Incluir a foto dos candidatos na impressão e na
+imagem"**. Ela não muda nada na tela — só o que sai impresso, na imagem e no WhatsApp.
+
+- **Desligada por padrão.** O santinho sem foto gasta muito menos tinta, e a colinha serve
+  pelo número, não pelo retrato. Quem quiser o santinho clássico liga.
+- Fica no mesmo `localStorage` da colinha (`{"v":1,"foto":true,"vagas":{…}}`) e **sobrevive ao
+  "Limpar colinha"** — limpar as escolhas não é motivo para esquecer a preferência. Por isso a
+  chave só apaga o registro quando a colinha está vazia **e** a foto está desligada.
+- Vaga vazia fica com o **contorno tracejado** no lugar da foto, para a coluna não desalinhar.
+- Visual quadrado, como todo o resto da página — o único arredondado aqui é a própria foto.
+  É um `<input type="checkbox" role="switch">`, então o teclado e o leitor de tela já a
+  entendem sem nada a mais.
+
+> As fotos são do próprio domínio (`fotos/1350-pe.jpg`, 161×225, ~5 KB), então **não sujam o
+> canvas** e o `toDataURL` continua funcionando — verificado com o CSP de produção aplicado.
+> No canvas o recorte é quadrado no centro, igual ao `object-fit:cover` da foto do card:
+> esticar um retrato deformaria o rosto.
+
+**Antes de imprimir ou desenhar, as fotos são carregadas** — sem isso a folha pode sair com o
+buraco no lugar delas. Há um prazo de 5s: em conexão ruim é melhor sair sem uma foto do que
+não sair. Com as fotos bloqueadas, a folha fica pronta em ~0,1s e a imagem é gerada do mesmo
+jeito, só com os contornos tracejados.
 
 ### Impressão
 

@@ -305,6 +305,12 @@ footer .aviso{flex-direction:column;align-items:flex-start;gap:4px;justify-conte
 .vaga-lista li.ativa .vo-aviso,.vaga-lista li[role=option]:hover .vo-aviso{color:var(--vermelho-claro)}
 .vo-num{grid-area:num;align-self:center;padding:4px 8px;background:var(--amarelo);color:var(--marinho);
   font-family:var(--display);font-size:16px;font-weight:400;letter-spacing:1px}
+/* Depois da regra das candidaturas de proposito: as duas tem a mesma
+   especificidade, entao quem vem por ultimo e que vale. */
+.vaga-lista li.vo-branco{display:block;padding:10px;background:var(--fundo);
+  border-top:0;border-bottom:2px solid var(--marinho);
+  font-size:13px;line-height:1.35;color:var(--texto-2);cursor:pointer}
+.vaga-lista li.vo-branco.ativa,.vaga-lista li.vo-branco:hover{background:var(--marinho);color:var(--branco)}
 .vaga-nada{padding:12px 10px;font-size:14px;line-height:1.4;color:var(--texto-3)}
 .vaga-mais{padding:9px 10px;border-top:2px solid var(--fundo);background:var(--fundo);
   font-size:12px;line-height:1.4;color:var(--texto-3)}
@@ -323,6 +329,19 @@ footer .aviso{flex-direction:column;align-items:flex-start;gap:4px;justify-conte
 .colinha-notas{padding:12px 14px;border-top:2px solid var(--marinho);background:var(--fundo)}
 .colinha-notas p{margin:0 0 7px;font-size:12px;line-height:1.45;color:var(--texto);text-align:left}
 .colinha-notas p:last-child{margin-bottom:0}
+
+/* Chave liga/desliga. Quadrada, como todo o resto da pagina: o unico arredondado
+   aqui e a foto. */
+.colinha-opcao{display:flex;align-items:center;gap:12px;padding:12px 14px;cursor:pointer;
+  border-top:2px solid var(--marinho);font-size:14px;font-weight:700;line-height:1.3}
+.colinha-opcao input{position:absolute;width:1px;height:1px;opacity:0}
+.chave{flex-shrink:0;width:54px;height:30px;padding:3px;display:flex;align-items:center;
+  background:#8A91A0;border:2px solid var(--marinho)}
+.chave::before{content:'';width:20px;height:20px;background:var(--branco);border:2px solid var(--marinho)}
+.colinha-opcao input:checked + .chave{background:var(--verde-escuro)}
+.colinha-opcao input:checked + .chave::before{transform:translateX(24px)}
+.colinha-opcao input:focus-visible + .chave{outline:3px solid var(--azul);outline-offset:2px}
+@media (prefers-reduced-motion:no-preference){ .chave,.chave::before{transition:background .15s,transform .15s} }
 
 .colinha-acoes{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;
   padding:14px;border-top:2px solid var(--marinho)}
@@ -388,6 +407,12 @@ p.colinha-recado{margin:0;padding:0 14px 14px;font-size:12px;line-height:1.45;fo
 .sv:first-of-type{border-top:0}
 .sv-cargo{font-size:var(--c);font-weight:700;letter-spacing:.5pt;text-transform:uppercase;color:#3A4254}
 .sv-linha{display:flex;align-items:center;gap:2mm;min-height:var(--db)}
+/* Foto no santinho: so entra quando a chave esta ligada. Vaga vazia fica com o
+   contorno tracejado, para a coluna nao desalinhar. */
+.sv-foto{width:var(--fh);height:var(--fh);flex-shrink:0;border-radius:50%;overflow:hidden;
+  border:1pt solid #0B1A33;background:#FFF}
+.sv-foto.vazia{border-style:dashed;border-color:#8A91A0}
+.sv-foto img{width:100%;height:100%;object-fit:cover;display:block}
 .sv-nome{flex:1;min-width:0;font-size:var(--n);font-weight:700;line-height:1.15;overflow-wrap:break-word}
 /* Vaga vazia sai como linha pontilhada: da para completar a mao depois de imprimir. */
 .sv.livre .sv-nome{border-bottom:1pt dotted #6B7384}
@@ -413,11 +438,11 @@ p.colinha-recado{margin:0;padding:0 14px 14px;font-size:12px;line-height:1.45;fo
   /* 296mm e nao 297: um milimetro de folga evita que o arredondamento do
      navegador empurre uma segunda folha em branco. */
   .folha,.folha4{box-sizing:border-box;width:210mm;height:296mm;overflow:hidden}
-  .folha{padding:14mm;display:flex;--t:30pt;--u:11pt;--c:11pt;--n:21pt;--d:23pt;--db:12mm;--esp:3mm}
+  .folha{padding:14mm;display:flex;--t:30pt;--u:11pt;--c:11pt;--n:21pt;--d:23pt;--db:12mm;--esp:3mm;--fh:20mm}
   .folha > .santinho{flex:1}
   /* Quatro santinhos: a borda tracejada de cada quadrante e a linha de corte. */
   .folha4{padding:5mm;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;
-    --t:14pt;--u:6.5pt;--c:6.5pt;--n:11pt;--d:11pt;--db:6.4mm;--esp:1.2mm}
+    --t:14pt;--u:6.5pt;--c:6.5pt;--n:11pt;--d:11pt;--db:6.4mm;--esp:1.2mm;--fh:11mm}
   .folha4 > div{box-sizing:border-box;display:flex;padding:4mm;border:1px dashed #8A91A0}
   .folha4 > div > .santinho{flex:1}
 }
@@ -452,6 +477,11 @@ p.colinha-recado{margin:0;padding:0 14px 14px;font-size:12px;line-height:1.45;fo
       <p>* Na hora de votar não pode levar o celular, então leve a colinha impressa.</p>
       <p>** Sua colinha é para um único estado. Os candidatos escolhidos para Governador, Senador e deputados devem ser do mesmo estado.</p>
     </div>
+    <label class="colinha-opcao">
+      <input type="checkbox" id="colFoto" role="switch">
+      <span class="chave" aria-hidden="true"></span>
+      <span>Incluir a foto dos candidatos na impressão e na imagem</span>
+    </label>
     <div class="colinha-acoes">
       <button type="button" class="imprimir" id="colImprimir1">Imprimir 1 por folha</button>
       <button type="button" class="imprimir" id="colImprimir4">Imprimir 4 santinhos</button>
@@ -1288,13 +1318,16 @@ p.colinha-recado{margin:0;padding:0 14px 14px;font-size:12px;line-height:1.45;fo
   var SITE = 'voteesquerda.com.br';
   // colinha[vaga.id] = chave do candidato. Vaga ausente quer dizer vaga livre.
   var colinha = {};
+  // A foto vai no impresso e na imagem? Desligada por padrao: o santinho sem foto
+  // gasta muito menos tinta, e a colinha serve pelo numero, nao pelo retrato.
+  var comFoto = false;
   // Botoes "Adicionar na colinha" que estao na tela agora. A grade e esvaziada a
   // cada filtro, entao a lista tambem (ver aplicar).
   var botoes = [];
 
   var colinhaEl = $('colinha'), colinhaRotulo = $('colinhaRotulo'), colinhaUf = $('colinhaUf'),
       colinhaVagas = $('colinhaVagas'), colinhaRecado = $('colinhaRecado'), colinhaAviso = $('colinhaAviso'),
-      btnColLimpar = $('colLimpar'), impressao = $('impressao'),
+      btnColLimpar = $('colLimpar'), chaveFoto = $('colFoto'), impressao = $('impressao'),
       modalFundo = $('modalFundo'), modalCaixa = $('modalCaixa'), modalTitulo = $('modalTitulo'),
       modalTexto = $('modalTexto'), modalAcoes = $('modalAcoes');
 
@@ -1346,6 +1379,7 @@ p.colinha-recado{margin:0;padding:0 14px 14px;font-size:12px;line-height:1.45;fo
       var bruto = localStorage.getItem(GUARDA);
       if (!bruto) return o;
       var d = JSON.parse(bruto);
+      comFoto = !!(d && d.foto);
       if (d && d.vagas) VAGAS.forEach(function (v) {
         if (typeof d.vagas[v.id] === 'string' && d.vagas[v.id]) o[v.id] = d.vagas[v.id];
       });
@@ -1355,9 +1389,10 @@ p.colinha-recado{margin:0;padding:0 14px 14px;font-size:12px;line-height:1.45;fo
   function gravarColinha() {
     try {
       // Colinha vazia apaga a chave em vez de guardar um objeto vazio: quem limpa
-      // a colinha nao deixa rastro nenhum no navegador.
-      if (!nColinha()) localStorage.removeItem(GUARDA);
-      else localStorage.setItem(GUARDA, JSON.stringify({ v: 1, vagas: colinha }));
+      // a colinha nao deixa rastro nenhum no navegador. A chave da foto segura o
+      // registro quando esta ligada, senao limpar a colinha esqueceria a opcao.
+      if (!nColinha() && !comFoto) localStorage.removeItem(GUARDA);
+      else localStorage.setItem(GUARDA, JSON.stringify({ v: 1, foto: comFoto, vagas: colinha }));
     } catch (e) {}
   }
   // Confere o que veio do localStorage contra a lista que acabou de carregar. O
@@ -1410,6 +1445,7 @@ p.colinha-recado{margin:0;padding:0 14px 14px;font-size:12px;line-height:1.45;fo
   // seletor de povo indigena (WAI-ARIA), e a mesma regra de numero da busca do
   // topo: digito casa por prefixo, porque o numero de urna e hierarquico.
   var LIMITE_VAGA = 8;
+  var EM_BRANCO = 'Você também pode deixar em branco para preencher à mão depois, clicando aqui';
   var vagasUI = null;
 
   // O que cabe nesta vaga: o cargo certo, o estado da colinha (a presidencia nao
@@ -1453,15 +1489,23 @@ p.colinha-recado{margin:0;padding:0 14px 14px;font-size:12px;line-height:1.45;fo
     campo.addEventListener('keydown', function (ev) {
       if (ev.key === 'ArrowDown' || ev.key === 'ArrowUp') {
         ev.preventDefault();
-        if (!b.itens.length) return pintarVagaLista(b);
+        // Com a lista fechada, a seta abre e ja marca a primeira (ou a ultima):
+        // sem isso seriam duas teclas para chegar na primeira entrada.
+        if (!b.itens.length) {
+          pintarVagaLista(b);
+          if (!b.itens.length) return;
+          b.ativo = ev.key === 'ArrowDown' ? 0 : b.itens.length - 1;
+          return pintarVagaLista(b);
+        }
         b.ativo = (b.ativo + (ev.key === 'ArrowDown' ? 1 : b.itens.length - 1)) % b.itens.length;
         pintarVagaLista(b);
       } else if (ev.key === 'Enter') {
         ev.preventDefault();
-        // Com uma opcao so, Enter escolhe sem precisar descer a seta: e o caminho
-        // de quem digitou o numero inteiro.
-        var k = b.ativo >= 0 ? b.ativo : (b.itens.length === 1 ? 0 : -1);
-        if (k >= 0) escolherNaVaga(b, b.itens[k]);
+        // Com uma candidatura so, Enter escolhe sem precisar descer a seta: e o
+        // caminho de quem digitou o numero inteiro. O 2 conta a entrada de
+        // deixar em branco, que vem sempre na frente.
+        var k = b.ativo >= 0 ? b.ativo : (b.itens.length === 2 ? 1 : -1);
+        if (k >= 0) escolherEntrada(b, b.itens[k]);
       } else if (ev.key === 'Escape') {   // 1o Esc limpa o que foi digitado, 2o fecha
         ev.stopPropagation();
         if (campo.value) { campo.value = ''; b.ativo = -1; pintarVagaLista(b); }
@@ -1486,32 +1530,31 @@ p.colinha-recado{margin:0;padding:0 14px 14px;font-size:12px;line-height:1.45;fo
     // duas listas abertas se sobrepoem na tela.
     if (vagasUI) vagasUI.forEach(function (u) { if (u.busca !== b) fecharVagaBusca(u.busca); });
     var q = norm(b.input.value), achados = opcoesVaga(b.v, q);
-    b.itens = achados.slice(0, LIMITE_VAGA);
+    var mostra = achados.slice(0, LIMITE_VAGA);
+    // Deixar em branco e sempre a primeira entrada: quem nao escolheu ninguem
+    // para este cargo segue para o proximo sem precisar fechar a lista.
+    b.itens = [{ branco: true }];
+    mostra.forEach(function (c) { b.itens.push({ c: c }); });
     if (b.ativo >= b.itens.length) b.ativo = -1;
     b.lista.textContent = '';
     b.lista.hidden = false;
     b.input.setAttribute('aria-expanded', 'true');
 
-    if (!b.itens.length) {
-      // Em conexao lenta da para abrir a colinha antes de a lista chegar. Dizer
-      // "nenhuma candidatura" ali seria mentira: ainda nao se sabe.
-      var nada = el('li', 'vaga-nada', !todos.length
-        ? 'Carregando as candidaturas…'
-        : q ? 'Nenhuma candidatura para “' + b.input.value + '” nesta vaga.'
-            : 'Nenhuma candidatura disponível para esta vaga.');
-      nada.setAttribute('role', 'presentation');
-      b.lista.appendChild(nada);
-      b.input.removeAttribute('aria-activedescendant');
-      return;
-    }
-
-    b.itens.forEach(function (c, k) {
+    b.itens.forEach(function (item, k) {
       var li = el('li');
       li.id = 'vo-' + b.v.id + '-' + k;
       li.setAttribute('role', 'option');
       li.setAttribute('aria-selected', k === b.ativo ? 'true' : 'false');
-      if (k === b.ativo) li.className = 'ativa';
+      li.className = (item.branco ? 'vo-branco ' : '') + (k === b.ativo ? 'ativa' : '');
+      li.addEventListener('mousedown', function (ev) { ev.preventDefault(); });  // nao rouba o foco
+      li.addEventListener('click', function () { escolherEntrada(b, item); });
 
+      if (item.branco) {
+        li.appendChild(el('span', null, EM_BRANCO));
+        b.lista.appendChild(li);
+        return;
+      }
+      var c = item.c;
       var nome = el('span', 'vo-nome');
       if (c.dest) {
         var est = el('span', 'vo-rec', '★ ');
@@ -1534,15 +1577,21 @@ p.colinha-recado{margin:0;padding:0 14px 14px;font-size:12px;line-height:1.45;fo
       // vaga nao passa pelo card. Em linha propria, que nao corta no reticente.
       if (c.indef) li.appendChild(el('span', 'vo-aviso', 'Registro indeferido'));
       li.appendChild(el('b', 'vo-num', c.numero));
-
-      li.addEventListener('mousedown', function (ev) { ev.preventDefault(); });  // nao rouba o foco
-      li.addEventListener('click', function () { escolherNaVaga(b, c); });
       b.lista.appendChild(li);
     });
 
-    if (achados.length > b.itens.length) {
+    if (!mostra.length) {
+      // Em conexao lenta da para abrir a colinha antes de a lista chegar. Dizer
+      // "nenhuma candidatura" ali seria mentira: ainda nao se sabe.
+      var nada = el('li', 'vaga-nada', !todos.length
+        ? 'Carregando as candidaturas…'
+        : q ? 'Nenhuma candidatura para “' + b.input.value + '” nesta vaga.'
+            : 'Nenhuma candidatura disponível para esta vaga.');
+      nada.setAttribute('role', 'presentation');
+      b.lista.appendChild(nada);
+    } else if (achados.length > mostra.length) {
       var mais = el('li', 'vaga-mais',
-        'Mostrando ' + b.itens.length + ' de ' + achados.length + ' — digite o nome ou o número.');
+        'Mostrando ' + mostra.length + ' de ' + achados.length + ' — digite o nome ou o número.');
       mais.setAttribute('role', 'presentation');
       b.lista.appendChild(mais);
     }
@@ -1550,6 +1599,20 @@ p.colinha-recado{margin:0;padding:0 14px 14px;font-size:12px;line-height:1.45;fo
     else b.input.removeAttribute('aria-activedescendant');
   }
 
+  function escolherEntrada(b, item) {
+    if (!item) return;
+    if (item.branco) return deixarEmBranco(b);
+    escolherNaVaga(b, item.c);
+  }
+  // Nao mexe no estado: a vaga ja esta vazia. Serve para seguir para o proximo
+  // cargo sem ter de fechar a lista na mao.
+  function deixarEmBranco(b) {
+    b.input.value = '';
+    fecharVagaBusca(b);
+    focarProximaVaga(b.v);
+    colinhaAviso.textContent = rotuloVaga(b.v, null) +
+      ' ficou em branco, para preencher à mão depois de imprimir.';
+  }
   function escolherNaVaga(b, c) {
     b.input.value = '';
     fecharVagaBusca(b);
@@ -1566,9 +1629,16 @@ p.colinha-recado{margin:0;padding:0 14px 14px;font-size:12px;line-height:1.45;fo
     var i = 0, k;
     for (; i < vagasUI.length; i++) if (vagasUI[i].v === apos) break;
     for (k = i + 1; k < vagasUI.length; k++) {
-      if (!candDaVaga(vagasUI[k].v)) return foco(vagasUI[k].busca.input);
+      if (candDaVaga(vagasUI[k].v)) continue;
+      // Abre a lista da proxima vaga em vez de contar com o evento de foco: o
+      // encadeamento fica explicito, e quem chegou ali ja ve o que pode escolher.
+      foco(vagasUI[k].busca.input);
+      return pintarVagaLista(vagasUI[k].busca);
     }
-    if (vagasUI[i]) foco(vagasUI[i].x);
+    // Sem vaga adiante, o foco vai para o botao de tirar da vaga que acabou de
+    // ser preenchida. Se ela ficou em branco esse botao esta escondido, e o foco
+    // fica onde esta — o campo da propria vaga continua ali.
+    if (vagasUI[i] && candDaVaga(vagasUI[i].v)) foco(vagasUI[i].x);
   }
   function foco(e) {
     if (!e) return;
@@ -1806,6 +1876,33 @@ p.colinha-recado{margin:0;padding:0 14px 14px;font-size:12px;line-height:1.45;fo
     if (s) { try { s.focus({ preventScroll: true }); } catch (e) { s.focus(); } }
   }
 
+  // ---- Fotos ----
+  // Carrega as fotos das vagas preenchidas antes de imprimir ou desenhar. Elas
+  // sao do proprio dominio (fotos/1350-pe.jpg), entao nao sujam o canvas e o
+  // toDataURL continua funcionando. O prazo existe porque em conexao ruim e
+  // melhor sair sem uma foto do que nao sair.
+  var PRAZO_FOTO = 5000;
+  function carregarFotos(fn) {
+    var mapa = {}, pend = [];
+    if (comFoto) VAGAS.forEach(function (v) {
+      var c = candDaVaga(v);
+      if (c && c.foto) pend.push(c);
+    });
+    if (!pend.length) return fn(mapa);
+    var falta = pend.length, pronto = false;
+    function acabou() { if (!pronto) { pronto = true; fn(mapa); } }
+    var prazo = setTimeout(acabou, PRAZO_FOTO);
+    pend.forEach(function (c) {
+      var im = new Image();
+      im.onload = function () {
+        mapa[chaveCand(c)] = im;
+        if (!--falta) { clearTimeout(prazo); acabou(); }
+      };
+      im.onerror = function () { if (!--falta) { clearTimeout(prazo); acabou(); } };
+      im.src = c.foto;
+    });
+  }
+
   // ---- O santinho ----
   // O mesmo bloco serve a folha inteira e os quatro santinhos; o que muda sao as
   // variaveis de tamanho, definidas no CSS por modo de impressao.
@@ -1818,6 +1915,16 @@ p.colinha-recado{margin:0;padding:0 14px 14px;font-size:12px;line-height:1.45;fo
       var linha = el('div', 'sv' + (c ? '' : ' livre'));
       linha.appendChild(el('span', 'sv-cargo', rotuloVaga(v, c)));
       var baixo = el('span', 'sv-linha');
+      if (comFoto) {
+        var moldura = el('span', 'sv-foto' + (c && c.foto ? '' : ' vazia'));
+        if (c && c.foto) {
+          var im = document.createElement('img');
+          im.src = c.foto;
+          im.alt = '';   // decorativa: o nome esta logo ao lado
+          moldura.appendChild(im);
+        }
+        baixo.appendChild(moldura);
+      }
       baixo.appendChild(el('span', 'sv-nome', c ? c.nome : ' '));
       baixo.appendChild(c ? caixinhaNum(c.numero, 'sv-num') : caixinhaBranco(v.digitos, 'sv-num'));
       linha.appendChild(baixo);
@@ -1826,6 +1933,10 @@ p.colinha-recado{margin:0;padding:0 14px 14px;font-size:12px;line-height:1.45;fo
     return s;
   }
   function imprimir(modo) {
+    // Sem esperar a foto chegar, a folha pode sair com o buraco no lugar dela.
+    carregarFotos(function () { montarEImprimir(modo); });
+  }
+  function montarEImprimir(modo) {
     impressao.textContent = '';
     var folha;
     if (modo === 4) {
@@ -1888,9 +1999,33 @@ p.colinha-recado{margin:0;padding:0 14px 14px;font-size:12px;line-height:1.45;fo
     });
     return x;
   }
-  function desenharColinha() {
+  // Recorte quadrado no centro, igual ao object-fit:cover da foto do card: a
+  // imagem do TSE e retrato (161x225) e esticar deformaria o rosto.
+  function desenharFoto(g, im, cx, cy, r) {
+    var lado = Math.min(im.naturalWidth || im.width, im.naturalHeight || im.height);
+    var sx = ((im.naturalWidth || im.width) - lado) / 2;
+    var sy = ((im.naturalHeight || im.height) - lado) / 2;
+    g.save();
+    g.beginPath(); g.arc(cx, cy, r, 0, Math.PI * 2); g.closePath(); g.clip();
+    g.drawImage(im, sx, sy, lado, lado, cx - r, cy - r, r * 2, r * 2);
+    g.restore();
+    g.beginPath(); g.arc(cx, cy, r, 0, Math.PI * 2);
+    g.strokeStyle = '#0B1A33'; g.lineWidth = 2.5; g.stroke();
+  }
+  function molduraVazia(g, cx, cy, r) {
+    g.beginPath(); g.arc(cx, cy, r, 0, Math.PI * 2);
+    g.strokeStyle = '#8A91A0'; g.lineWidth = 2;
+    if (g.setLineDash) g.setLineDash([5, 5]);
+    g.stroke();
+    if (g.setLineDash) g.setLineDash([]);
+  }
+
+  function desenharColinha(fotos) {
+    fotos = fotos || {};
     var E = 2;   // 2x: o PNG aguenta ser aberto e ampliado no celular sem serrilhar
     var L = IMG.L, A = IMG.A, P = IMG.PAD;
+    // Com foto, o nome comeca depois dela; sem foto, encostado na margem.
+    var R = 31, esq = P + (comFoto ? R * 2 + 14 : 0);
     var cv = document.createElement('canvas');
     cv.width = L * E; cv.height = A * E;
     var g = cv.getContext('2d');
@@ -1923,6 +2058,12 @@ p.colinha-recado{margin:0;padding:0 14px 14px;font-size:12px;line-height:1.45;fo
       g.font = '700 14px "Public Sans", system-ui, sans-serif';
       g.fillText(rotuloVaga(v, c).toUpperCase(), P, y + 27);
 
+      if (comFoto) {
+        var im = c && fotos[chaveCand(c)];
+        if (im) desenharFoto(g, im, P + R, y + 68, R);
+        else molduraVazia(g, P + R, y + 68, R);
+      }
+
       // Vaga vazia tambem leva caixas, em branco: da para mandar a imagem ou
       // imprimir e completar a mao o que ainda nao foi escolhido.
       var fim = caixinhaCanvas(g, c ? String(c.numero).split('') : vazios(v.digitos), L - P, y + 70);
@@ -1931,13 +2072,13 @@ p.colinha-recado{margin:0;padding:0 14px 14px;font-size:12px;line-height:1.45;fo
         g.textBaseline = 'alphabetic';
         g.fillStyle = '#0B1A33';
         g.font = '700 24px "Public Sans", system-ui, sans-serif';
-        g.fillText(corta(g, c.nome, fim - P - 16), P, y + 79);
+        g.fillText(corta(g, c.nome, fim - esq - 16), esq, y + 79);
       } else {
         // Linha pontilhada para o nome, parando antes das caixas.
         g.strokeStyle = '#8A91A0';
         g.lineWidth = 1.5;
         if (g.setLineDash) g.setLineDash([5, 5]);
-        g.beginPath(); g.moveTo(P, y + 84); g.lineTo(fim - 16, y + 84); g.stroke();
+        g.beginPath(); g.moveTo(esq, y + 84); g.lineTo(fim - 16, y + 84); g.stroke();
         if (g.setLineDash) g.setLineDash([]);
       }
       y += IMG.LINHA;
@@ -1959,12 +2100,14 @@ p.colinha-recado{margin:0;padding:0 14px 14px;font-size:12px;line-height:1.45;fo
   }
   function baixarImagem() {
     comFontes(function () {
-      try {
-        baixarCanvas(desenharColinha());
-        avisar('Imagem salva como minha-colinha.png.');
-      } catch (e) {
-        avisar('Não foi possível gerar a imagem neste navegador. Use um dos botões de imprimir.');
-      }
+      carregarFotos(function (fotos) {
+        try {
+          baixarCanvas(desenharColinha(fotos));
+          avisar('Imagem salva como minha-colinha.png.');
+        } catch (e) {
+          avisar('Não foi possível gerar a imagem neste navegador. Use um dos botões de imprimir.');
+        }
+      });
     });
   }
   function textoColinha() {
@@ -1982,19 +2125,22 @@ p.colinha-recado{margin:0;padding:0 14px 14px;font-size:12px;line-height:1.45;fo
   // imagem e baixada e o WhatsApp abre com o texto, para anexar na conversa.
   function compartilhar() {
     comFontes(function () {
-      var cv;
-      try { cv = desenharColinha(); } catch (e) { cv = null; }
-      var texto = textoColinha();
-      if (!cv || !cv.toBlob || !navigator.canShare) return semFolha(cv, texto);
-      cv.toBlob(function (blob) {
-        var arq = null;
-        try { arq = new File([blob], 'minha-colinha.png', { type: 'image/png' }); } catch (e) {}
-        if (arq && navigator.canShare({ files: [arq] })) {
-          avisar('');
-          navigator.share({ files: [arq], text: texto })['catch'](function () {});
-        } else semFolha(cv, texto);
-      }, 'image/png');
+      carregarFotos(function (fotos) { comImagem(fotos); });
     });
+  }
+  function comImagem(fotos) {
+    var cv;
+    try { cv = desenharColinha(fotos); } catch (e) { cv = null; }
+    var texto = textoColinha();
+    if (!cv || !cv.toBlob || !navigator.canShare) return semFolha(cv, texto);
+    cv.toBlob(function (blob) {
+      var arq = null;
+      try { arq = new File([blob], 'minha-colinha.png', { type: 'image/png' }); } catch (e) {}
+      if (arq && navigator.canShare({ files: [arq] })) {
+        avisar('');
+        navigator.share({ files: [arq], text: texto })['catch'](function () {});
+      } else semFolha(cv, texto);
+    }, 'image/png');
   }
   function semFolha(cv, texto) {
     if (cv) { try { baixarCanvas(cv); } catch (e) { cv = null; } }
@@ -2006,6 +2152,12 @@ p.colinha-recado{margin:0;padding:0 14px 14px;font-size:12px;line-height:1.45;fo
   // ---- Ligacoes ----
   colinha = lerColinha();
   pintarColinha();
+  chaveFoto.checked = comFoto;
+  chaveFoto.addEventListener('change', function () {
+    comFoto = chaveFoto.checked;
+    gravarColinha();
+    avisar('');
+  });
   btnColLimpar.addEventListener('click', limparColinha);
   $('colImprimir1').addEventListener('click', function () { imprimir(1); });
   $('colImprimir4').addEventListener('click', function () { imprimir(4); });
