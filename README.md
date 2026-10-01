@@ -45,8 +45,9 @@ estado da colinha, e a primeira entrada é sempre **deixar em branco e ir para o
 cargo**, para quem vai completar à mão depois de imprimir.
 
 Uma chave liga/desliga decide se a **foto dos candidatos** entra na impressão e na imagem.
-Vem desligada: sem foto gasta bem menos tinta. A preferência fica guardada junto com a
-colinha.
+Vem **ligada**: com o retrato ao lado do número dá para conferir de relance que a colinha
+está certa. Quem imprime em preto e branco ou quer poupar tinta desliga, e a preferência
+fica guardada junto com a colinha.
 
 A seleção fica **só no `localStorage` do navegador**: não há banco de dados e nada sai da
 máquina de quem acessa. Sem `localStorage` disponível (aba privada, por exemplo) a página

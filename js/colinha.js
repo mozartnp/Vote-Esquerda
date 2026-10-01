@@ -30,9 +30,12 @@ var GUARDA = 'vote-esquerda-colinha';
 var SITE = 'voteesquerda.com.br';
 // colinha[vaga.id] = chave do candidato. Vaga ausente quer dizer vaga livre.
 var colinha = {};
-// A foto vai no impresso e na imagem? Desligada por padrao: o santinho sem foto
-// gasta muito menos tinta, e a colinha serve pelo numero, nao pelo retrato.
-var comFoto = false;
+// A foto vai no impresso e na imagem? Ligada por padrao: com o retrato do lado
+// do numero da para conferir de relance que a colinha esta certa, e quem leva
+// impresso costuma mostrar para alguem. Quem imprime em preto e branco ou quer
+// poupar tinta desliga no interruptor — e a escolha fica guardada.
+var FOTO_PADRAO = true;
+var comFoto = FOTO_PADRAO;
 // Botoes "Adicionar na colinha" que estao na tela agora. A grade e esvaziada a
 // cada filtro, entao a lista tambem (ver aplicar).
 export var botoes = [];
@@ -101,9 +104,10 @@ function lerColinha() {
 function gravarColinha() {
   try {
     // Colinha vazia apaga a chave em vez de guardar um objeto vazio: quem limpa
-    // a colinha nao deixa rastro nenhum no navegador. A chave da foto segura o
-    // registro quando esta ligada, senao limpar a colinha esqueceria a opcao.
-    if (!nColinha() && !comFoto) localStorage.removeItem(GUARDA);
+    // a colinha nao deixa rastro nenhum no navegador. Mas so quando a foto esta
+    // no padrao: se o visitante mexeu no interruptor, a chave segura a escolha —
+    // senao limpar a colinha com a foto desligada a religaria no proximo reload.
+    if (!nColinha() && comFoto === FOTO_PADRAO) localStorage.removeItem(GUARDA);
     else localStorage.setItem(GUARDA, JSON.stringify({ v: 1, foto: comFoto, vagas: colinha }));
   } catch (e) {}
 }

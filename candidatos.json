@@ -1955,7 +1955,7 @@
     {
       "nome": "Juliana Brizola",
       "nome_completo": "Juliana Brizola",
-      "destaque": false,
+      "destaque": true,
       "numero": "12",
       "uf": "RS",
       "cargo": "Governadora",
@@ -3555,7 +3555,7 @@
     {
       "nome": "Pimenta",
       "nome_completo": "Paulo Roberto Severo Pimenta",
-      "destaque": false,
+      "destaque": true,
       "numero": "131",
       "uf": "RS",
       "cargo": "Senador",
@@ -72805,7 +72805,7 @@
     {
       "nome": "Eduardo Suplicy",
       "nome_completo": "Eduardo Matarazzo Suplicy",
-      "destaque": false,
+      "destaque": true,
       "numero": "13133",
       "uf": "SP",
       "cargo": "Deputado Estadual",

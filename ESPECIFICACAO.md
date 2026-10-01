@@ -386,11 +386,14 @@ navegador.** Formato: `{"v":1,"vagas":{"presidente":"<sq>", …}}`.
 Uma chave liga/desliga acima dos botões: **"Incluir a foto dos candidatos na impressão e na
 imagem"**. Ela não muda nada na tela — só o que sai impresso, na imagem e no WhatsApp.
 
-- **Desligada por padrão.** O santinho sem foto gasta muito menos tinta, e a colinha serve
-  pelo número, não pelo retrato. Quem quiser o santinho clássico liga.
+- **Ligada por padrão** (`FOTO_PADRAO` em `js/colinha.js`). Com o retrato ao lado do número
+  dá para conferir de relance que a colinha está certa, e quem leva impresso costuma mostrar
+  para alguém. Quem imprime em preto e branco ou quer poupar tinta desliga.
 - Fica no mesmo `localStorage` da colinha (`{"v":1,"foto":true,"vagas":{…}}`) e **sobrevive ao
   "Limpar colinha"** — limpar as escolhas não é motivo para esquecer a preferência. Por isso a
-  chave só apaga o registro quando a colinha está vazia **e** a foto está desligada.
+  chave só apaga o registro quando a colinha está vazia **e** a foto está no padrão. A
+  comparação é com `FOTO_PADRAO`, não com `false`: é o que faz a escolha de **desligar**
+  sobreviver a um "Limpar colinha" agora que o padrão é ligado.
 - Vaga vazia fica com o **contorno tracejado** no lugar da foto, para a coluna não desalinhar.
 - Visual quadrado, como todo o resto da página — o único arredondado aqui é a própria foto.
   É um `<input type="checkbox" role="switch">`, então o teclado e o leitor de tela já a
