@@ -2,7 +2,7 @@
 
 Site de página única para as eleições de 2026: lista de candidaturas do campo progressista com busca. Deve ficar no ar por cerca de 2 semanas (até o 1º turno, em 4/10/2026, e eventualmente até o 2º turno). A lista de candidatos muda durante esse período.
 
-> **Ponto de partida:** o `index.html` e o `candidatos.json` que acompanham este documento já são uma implementação funcional e testada. A tarefa é revisar, completar os pendentes (seção 10) e publicar, não recomeçar do zero.
+> **Ponto de partida:** o `index.html` e o `candidatos.json` que acompanham este documento já são uma implementação funcional e testada. A tarefa é revisar, completar os pendentes (seção 11) e publicar, não recomeçar do zero.
 
 ---
 
@@ -20,6 +20,7 @@ Site de página única para as eleições de 2026: lista de candidaturas do camp
 | Filtros | 13 facetas, todas combináveis. Marcar dois valores na mesma faceta **soma** (PSOL *ou* PT); facetas diferentes **cruzam** (PSOL *e* mulher *e* PE) | Era o segundo pedido mais repetido: não dava para combinar nada |
 | Filtros na URL | `?uf=PE&partido=PSOL\|PT&sexo=Feminino` | Qualquer recorte montado no painel vira link compartilhável |
 | Segurança do conteúdo | Todo texto do JSON é inserido com `textContent`, nunca `innerHTML`. Links só são aceitos se começarem com `https://` | Evita XSS por conteúdo colado errado na lista |
+| Colinha | Seis vagas montadas pelo visitante, guardadas **só no `localStorage`** do navegador. Impressa por `@media print` | Sem banco de dados e sem nada sair do navegador. Sem `localStorage` a página continua inteira, só não lembra. Ver seção 6 |
 
 ---
 
@@ -246,7 +247,151 @@ Estrutura da página, de cima para baixo:
 
 ---
 
-## 6. Estrutura do repositório
+## 6. A colinha
+
+O visitante monta a lista de quem vai votar e leva impressa para a urna. Fica num
+`<details>` logo abaixo da chamada, **fechado por padrão**, e o rótulo do botão diz o
+estado em que está:
+
+| Situação | Botão |
+|---|---|
+| Vazia, fechada | `▾ Quero minha colinha` |
+| Vazia, aberta | `▴ Quero minha colinha` |
+| Com 3 escolhas, fechada | `▾ Minha colinha 3/6` |
+| Com 3 escolhas, aberta | `▴ Minha colinha 3/6` |
+
+A seta vai num quadrado marinho sobre a faixa amarela, e à direita aparece `ABRIR`/`FECHAR`
+(oculto abaixo de 420px). O alvo tem 62px de altura: é a segunda ação da página, depois de
+buscar, e precisa ser óbvia para quem tem pouca familiaridade com tela.
+
+### As seis vagas
+
+Presidente, Governador, **Senador 1**, **Senador 2**, Dep. Federal e Dep. Estadual — a cédula
+de uma eleição geral. Os dois senadores aparecem numerados em todo lugar: no painel, no
+impresso, na imagem e no texto do WhatsApp. No DF a quinta vaga se chama **Dep. Distrital**,
+decidido pelo cargo de quem ocupa a vaga (ou, com a vaga vazia, pelo estado que a colinha
+já tem).
+
+Cada cargo tem um tamanho fixo de número de urna, e é ele que desenha as caixas vazias de
+quem ainda não escolheu — vale para as 3.789 candidaturas da lista, sem exceção:
+
+| Vaga | Dígitos |
+|---|---|
+| Presidente | 2 |
+| Governador | 2 |
+| Senador 1 e Senador 2 | 3 |
+| Dep. Federal | 4 |
+| Dep. Estadual / Distrital | 5 |
+
+### Adicionar e remover
+
+Cada card ganhou um botão **"Adicionar na colinha"**. Já estando na colinha, ele vira
+**"✓ Na minha colinha"** em verde-escuro e o mesmo clique remove (no `hover` fica vermelho,
+que é o que o clique vai fazer). Dentro do painel, cada vaga preenchida tem um `×` próprio, e
+há um **"Limpar colinha"** no rodapé, no mesmo espírito do "Limpar" dos filtros — só que este
+pergunta antes, porque perder seis escolhas montadas à mão é bem pior que perder um filtro.
+
+**Cargo já preenchido.** Pergunta antes de trocar. Cargo de vaga única:
+
+> Cargo já preenchido, por **Fulano — 13**, deseja trocar por **Beltrano — 50**?
+> `[Cancelar]` `[Trocar]`
+
+Senado tem duas vagas, então a pergunta tem três respostas — e por isso não dá para usar
+`confirm()`, que só tem duas:
+
+> Cargo já preenchido pelos candidatos:
+> Senador 1: **Fulano — 131**
+> Senador 2: **Beltrano — 133**
+> Deseja trocar algum deles por **Cicrano — 161**?
+> `[Cancelar]` `[Trocar Senador 1]` `[Trocar Senador 2]`
+
+Com **uma** vaga de senado livre não há pergunta: entra direto na que está vazia.
+
+**Um estado só.** Governador, Senadores e deputados têm que ser do mesmo estado. O estado da
+colinha é o do primeiro candidato estadual que entrou; **a Presidência não conta**, porque a
+candidatura é nacional (`uf: "BR"`). Candidato de outro estado não entra, e o aviso lista
+quem já está lá para o visitante remover, se quiser montar a colinha com ele.
+
+Com estado definido, uma faixa marinho no topo do painel diz *"Colinha de Pernambuco —
+Governador, Senador e deputados são do mesmo estado."*. **Enquanto não há estado a faixa não
+aparece**: ela não teria o que dizer, e a observação `**` já explica a regra.
+
+### Persistência
+
+Só `localStorage`, na chave `vote-esquerda-colinha`. **Sem banco de dados e sem nada sair do
+navegador.** Formato: `{"v":1,"vagas":{"presidente":"<sq>", …}}`.
+
+- Guarda a **chave da candidatura** (o `sq` do TSE, único nos 3.789 registros), nunca a
+  candidatura inteira. Se alguém sair da lista, a vaga esvazia sozinha em vez de a colinha
+  continuar mostrando quem não concorre mais. A reserva, para um bloco novo editado à mão sem
+  `sq`, é `numero-uf-cargo`.
+- Colinha vazia **apaga a chave** em vez de guardar objeto vazio: quem limpa não deixa rastro.
+- Tudo em `try/catch`. Em aba privada o `localStorage` existe mas estoura ao gravar — sem
+  persistência **a página continua inteira**, só não lembra na próxima visita.
+- O que volta do `localStorage` é conferido contra a lista recém-carregada (`conferirColinha`):
+  cada vaga precisa ter candidatura existente, do cargo certo, sem repetir pessoa e toda do
+  mesmo estado. O conteúdo é editável pelo visitante, então nada ali pode ser pressuposto.
+
+### Impressão
+
+Via `@media print`, **sem servidor e sem gerar PDF no backend**. Dois botões:
+
+- **Imprimir 1 por folha** — a colinha ocupa a folha A4 inteira.
+- **Imprimir 4 santinhos** — 2×2 numa folha, com a borda tracejada de cada quadrante
+  servindo de linha de corte.
+
+O mesmo bloco (`.santinho`) serve aos dois; o que muda são variáveis CSS de tamanho
+(`--t`, `--n`, `--d`, `--db`…) definidas por modo. `@page` usa `size:A4; margin:0` e os
+recuos vão no padding, o que também tira os cabeçalhos e rodapés do navegador. A folha tem
+**296mm e não 297**: um milímetro de folga evita que o arredondamento empurre uma segunda
+folha em branco.
+
+> O `body > *:not(#impressao){display:none !important}` precisa do `!important` porque
+> `.hero`, `.faixa` e `main` já declaram `display` com seletor de classe, que ganharia de um
+> `body > *` por especificidade.
+
+Pode ser impressa **cheia, parcial ou vazia**. Vaga não preenchida sai com **linha pontilhada
+para o nome e as caixas do número em branco**, no tamanho daquele cargo — dá para imprimir
+quatro santinhos em branco e preencher tudo à mão. Caixa vazia é branca, e não amarela:
+branco se lê como "escreva aqui", e é onde a caneta pega.
+
+### Imagem e WhatsApp
+
+- **Baixar como imagem** — PNG desenhado no `<canvas>` em 2x (700×788 em pontos de layout),
+  sem dependência externa e sem depender do tamanho da janela de quem clicou. O download sai
+  por `<a download>` com `dataURL`, que passa pelo CSP de produção (`img-src 'self' data:`).
+- **Enviar no WhatsApp** — no celular, `navigator.share()` com o PNG anexado abre a folha de
+  compartilhamento, e o WhatsApp é um dos destinos. No computador não existe esse caminho:
+  ali a imagem é baixada e o `wa.me` abre com a colinha em texto, para anexar na conversa.
+
+### Observações
+
+Aparecem no painel e **não** vão para a impressão nem para a imagem:
+
+> \* Na hora de votar não pode levar o celular, então leve a colinha impressa.
+>
+> \*\* Sua colinha é para um único estado. Os candidatos escolhidos para Governador, Senador e
+> deputados devem ser do mesmo estado.
+
+### Os textos do painel
+
+As duas observações e o recado verde (o que aparece depois de baixar a imagem) ficam em 12px,
+alinhados à esquerda, em marinho e verde-escuro.
+
+> A colinha mora dentro da `.faixa`, e `.faixa p` é classe **+** elemento: ganha de uma classe
+> sozinha. O recado saía em `#E8ECF4`, 20px e centralizado — quase invisível sobre o branco.
+> Por isso o seletor é `p.colinha-recado`, que empata com ela e vem depois, e por isso o
+> `text-align` precisa ser dito em vez de herdado.
+
+### O número em caixinhas
+
+Um dígito por caixa, amarelo sobre marinho, como na urna e no santinho de rua — é assim que o
+número é conferido na hora de votar. As caixas ficam `aria-hidden` e o número inteiro vai num
+texto só, senão o leitor de tela soletra dígito a dígito.
+
+---
+
+## 7. Estrutura do repositório
 
 ```
 /
@@ -264,7 +409,7 @@ python3 -m http.server 8000   # e abrir http://localhost:8000
 
 ---
 
-## 7. Publicação
+## 8. Publicação
 
 1. Criar um repositório no GitHub com os arquivos acima.
 2. No Cloudflare Pages: *Create project → Connect to Git*, selecionar o repositório. Não há build command e o output directory é `/`.
@@ -274,12 +419,12 @@ python3 -m http.server 8000   # e abrir http://localhost:8000
 ### Rotina de atualização (para quem cuida da lista)
 - **Adicionar:** editar `candidatos.json` pelo GitHub (ícone de lápis), colar um novo bloco, subir a foto em `fotos/`, atualizar `atualizado_em` e fazer commit.
 - **Remover:** apagar o bloco e fazer commit.
-- **Cuidado com vírgulas:** um JSON inválido quebra a lista. Recomendado: adicionar uma GitHub Action que valida o JSON a cada commit (ver seção 10).
+- **Cuidado com vírgulas:** um JSON inválido quebra a lista. Recomendado: adicionar uma GitHub Action que valida o JSON a cada commit (ver seção 11).
 - **Desfazer:** qualquer alteração pode ser revertida pelo histórico de commits.
 
 ---
 
-## 8. Segurança
+## 9. Segurança
 
 - **DDoS:** absorvido pelo CDN, já que não há servidor próprio.
 - **Contas:** 2FA (app autenticador, não SMS) em **GitHub, Cloudflare/Netlify e no registro do domínio** (Registro.br ou outro). O risco real é alguém invadir uma dessas contas.
@@ -290,7 +435,7 @@ python3 -m http.server 8000   # e abrir http://localhost:8000
 
 ---
 
-## 9. Acessibilidade (já implementado — manter)
+## 10. Acessibilidade (já implementado — manter)
 
 - `<label>` no campo de busca, `role="search"` no formulário.
 - Facetas são `<details>`/`<summary>` nativos, navegáveis por teclado sem JS.
@@ -302,26 +447,32 @@ python3 -m http.server 8000   # e abrir http://localhost:8000
 - Links externos com `aria-label` dizendo que abrem em nova aba.
 - Alvos de toque de pelo menos 44px. Contraste AA (por isso o selo do partido usa verde-escuro, não o verde da bandeira).
 - Hero decorativo com `aria-hidden`. Animação de entrada desativada com `prefers-reduced-motion`.
+- **Colinha:** o painel é `<details>`/`<summary>` nativo. A caixa de pergunta é
+  `role="dialog"` + `aria-modal`, com o foco preso no Tab, Esc fechando (sem fechar a gaveta
+  de filtros atrás) e o foco voltando para onde estava. O botão do card leva `aria-pressed` e
+  o nome da pessoa no `aria-label`, senão doze cards viram doze botões iguais. Uma região
+  `aria-live` anuncia quem entrou ou saiu e quantas vagas faltam. As caixinhas do número são
+  `aria-hidden` e o número inteiro vai num texto só, para o leitor de tela não soletrar.
 
 ---
 
-## 10. Pendentes para o desenvolvedor
+## 11. Pendentes para o desenvolvedor
 
 - [ ] **Preencher o rodapé** com o responsável pela página (nome/CPF ou CNPJ), conforme a Resolução TSE nº 23.610/2019 sobre propaganda eleitoral na internet. **Confirmar as exigências com assessoria jurídica.**
-- [x] Lista real carregada do Portal de Dados Abertos do TSE (3.789 candidaturas de PDT, PCdoB, PSOL, PT, PV, REDE, PCB, PSTU, UP e PCO). Ver seção 11.
-- [x] Links do TSE: URL individual de cada candidatura no DivulgaCandContas (ver seção 11).
+- [x] Lista real carregada do Portal de Dados Abertos do TSE (3.789 candidaturas de PDT, PCdoB, PSOL, PT, PV, REDE, PCB, PSTU, UP e PCO). Ver seção 12.
+- [x] Links do TSE: URL individual de cada candidatura no DivulgaCandContas (ver seção 12).
 - [x] Pasta `fotos/` com as 3.789 fotos oficiais do TSE (~31 MB; os arquivos já vêm com ~8 KB, não precisaram de otimização).
 - [ ] Marcar os `destaque: true` — o selo RECOMENDAÇÃO do card e a faceta "Recomendação do site".
 - [ ] Preencher o campo `proposta`: o TSE não publica texto de proposta, só PDFs de plano de governo para as majoritárias.
 - [ ] GitHub Action para validar o `candidatos.json` a cada commit (ex.: `python -m json.tool candidatos.json` ou `jq . candidatos.json`), bloqueando deploy com JSON quebrado.
 - [ ] Imagem de compartilhamento (`og:image`, 1200×630) com a identidade do hero, mais o favicon.
 - [x] Fontes hospedadas localmente em `fontes/` (45 KB, subconjunto latin, que cobre 100% do conteúdo). A página não faz mais nenhuma requisição a domínio externo.
-- [ ] (Opcional) Arquivo `_headers` com CSP (seção 8).
+- [ ] (Opcional) Arquivo `_headers` com CSP (seção 9).
 - [ ] Testar em celular real (Android/iOS) e com leitor de tela.
 
 ---
 
-## 11. Origem dos dados (`candidatos.json`)
+## 12. Origem dos dados (`candidatos.json`)
 
 Gerado a partir do **Portal de Dados Abertos do TSE**, conjunto *Candidatos - 2026*
 (https://dadosabertos.tse.jus.br/dataset/candidatos-2026), com a extração de 30/09/2026.

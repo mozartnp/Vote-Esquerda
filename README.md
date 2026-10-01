@@ -1,6 +1,6 @@
 # Vote Esquerda
 
-Site com as candidaturas do campo progressista nas eleições de 2026, com busca por nome, número, partido ou estado.
+Site com as candidaturas do campo progressista nas eleições de 2026, com busca por nome, número, partido ou estado, e uma **colinha** para montar e imprimir a lista de quem votar.
 
 HTML, CSS e JavaScript puros: sem framework, sem build, sem dependências para instalar.
 
@@ -25,6 +25,23 @@ logos/             logos dos partidos em SVG
 ESPECIFICACAO.md   documentação completa: layout, cores, comportamento, pendências
 substituicoes.md   ajustes manuais feitos na extração do TSE
 ```
+
+## A colinha
+
+O visitante monta as seis vagas da cédula (Presidente, Governador, Senador 1, Senador 2,
+Dep. Federal e Dep. Estadual) e leva impressa para a urna — na hora de votar não pode levar o
+celular. Vaga não preenchida sai com a linha do nome pontilhada e as caixas do número em
+branco, então dá para imprimir em branco e completar à mão.
+
+A seleção fica **só no `localStorage` do navegador**: não há banco de dados e nada sai da
+máquina de quem acessa. Sem `localStorage` disponível (aba privada, por exemplo) a página
+continua funcionando igual, só não lembra a colinha na próxima visita.
+
+Imprime em folha inteira ou em 4 santinhos com linha de corte, tudo por `@media print` —
+sem servidor e sem gerar PDF no backend. Também baixa como PNG (desenhado no `<canvas>`) e
+envia no WhatsApp.
+
+Detalhes de comportamento na seção 6 do [ESPECIFICACAO.md](ESPECIFICACAO.md).
 
 ## Editando a lista
 
