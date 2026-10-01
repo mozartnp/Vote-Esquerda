@@ -24,7 +24,7 @@
     {
       "nome": "Hertz Dias",
       "nome_completo": "Hertz da Conceicao Dias",
-      "destaque": false,
+      "destaque": true,
       "numero": "16",
       "uf": "BR",
       "cargo": "Presidente",
@@ -43,7 +43,7 @@
     {
       "nome": "Lula",
       "nome_completo": "Luiz Inácio Lula da Silva",
-      "destaque": false,
+      "destaque": true,
       "numero": "13",
       "uf": "BR",
       "cargo": "Presidente",
@@ -746,7 +746,7 @@
     {
       "nome": "Ivan Moraes",
       "nome_completo": "Ivan Vasconcellos de Moraes Filho",
-      "destaque": false,
+      "destaque": true,
       "numero": "50",
       "uf": "PE",
       "cargo": "Governador",
@@ -2266,7 +2266,7 @@
     {
       "nome": "Humberto Costa",
       "nome_completo": "Humberto Sergio Costa Lima",
-      "destaque": false,
+      "destaque": true,
       "numero": "130",
       "uf": "PE",
       "cargo": "Senador",
@@ -3311,7 +3311,7 @@
     {
       "nome": "Marília Arraes",
       "nome_completo": "Marília Valença Rocha Arraes de Alencar",
-      "destaque": false,
+      "destaque": true,
       "numero": "123",
       "uf": "PE",
       "cargo": "Senadora",
@@ -5458,7 +5458,7 @@
     {
       "nome": "Prof. Hamilton Assis",
       "nome_completo": "Hamilton Moreira de Assis",
-      "destaque": false,
+      "destaque": true,
       "numero": "5050",
       "uf": "BA",
       "cargo": "Deputado Federal",
@@ -6788,7 +6788,7 @@
     {
       "nome": "Fábio Felix",
       "nome_completo": "Fábio Felix Silveira",
-      "destaque": false,
+      "destaque": true,
       "numero": "5050",
       "uf": "DF",
       "cargo": "Deputado Federal",
@@ -7149,7 +7149,7 @@
     {
       "nome": "Prof. Vinícius Machado",
       "nome_completo": "Vinicius Oliveira Machado",
-      "destaque": false,
+      "destaque": true,
       "numero": "5080",
       "uf": "ES",
       "cargo": "Deputado Federal",
@@ -7396,7 +7396,7 @@
     {
       "nome": "Fernando Viana",
       "nome_completo": "Fernando Viana Costa",
-      "destaque": false,
+      "destaque": true,
       "numero": "5000",
       "uf": "GO",
       "cargo": "Deputado Federal",
@@ -12146,7 +12146,7 @@
     {
       "nome": "Jones Manoel",
       "nome_completo": "Jones Manoel da Silva",
-      "destaque": false,
+      "destaque": true,
       "numero": "5050",
       "uf": "PE",
       "cargo": "Deputado Federal",
@@ -13495,7 +13495,7 @@
     {
       "nome": "Renato Freitas",
       "nome_completo": "Renato de Almeida Freitas Junior",
-      "destaque": false,
+      "destaque": true,
       "numero": "1333",
       "uf": "PR",
       "cargo": "Deputado Federal",
@@ -14198,7 +14198,7 @@
     {
       "nome": "Elias Jabbour",
       "nome_completo": "Elias Marco Khalil Jabbour",
-      "destaque": false,
+      "destaque": true,
       "numero": "6577",
       "uf": "RJ",
       "cargo": "Deputado Federal",
@@ -14350,7 +14350,7 @@
     {
       "nome": "Glauber Braga",
       "nome_completo": "Glauber de Medeiros Braga",
-      "destaque": false,
+      "destaque": true,
       "numero": "5080",
       "uf": "RJ",
       "cargo": "Deputado Federal",
@@ -16991,7 +16991,7 @@
     {
       "nome": "Roberto Robaina",
       "nome_completo": "Carlos Roberto de Souza Robaina",
-      "destaque": false,
+      "destaque": true,
       "numero": "5000",
       "uf": "RS",
       "cargo": "Deputado Federal",
@@ -19689,7 +19689,7 @@
     {
       "nome": "Thiago Ávila",
       "nome_completo": "Thiago de Ávila e Silva Oliveira",
-      "destaque": false,
+      "destaque": true,
       "numero": "1888",
       "uf": "SP",
       "cargo": "Deputado Federal",
@@ -22596,7 +22596,7 @@
     {
       "nome": "Tuanne Almeida",
       "nome_completo": "Tuanne Almeida de Souza",
-      "destaque": false,
+      "destaque": true,
       "numero": "5050",
       "uf": "ES",
       "cargo": "Deputada Federal",
@@ -24192,7 +24192,7 @@
     {
       "nome": "Maria da Consolação",
       "nome_completo": "Maria da Consolacao Rocha",
-      "destaque": false,
+      "destaque": true,
       "numero": "5000",
       "uf": "MG",
       "cargo": "Deputada Federal",
@@ -25503,7 +25503,7 @@
     {
       "nome": "Vivi Reis",
       "nome_completo": "Viviane da Costa Reis",
-      "destaque": false,
+      "destaque": true,
       "numero": "5050",
       "uf": "PA",
       "cargo": "Deputada Federal",
@@ -27555,7 +27555,7 @@
     {
       "nome": "Heloísa Helena",
       "nome_completo": "Heloisa Helena Lima de Moraes Carvalho",
-      "destaque": false,
+      "destaque": true,
       "numero": "1818",
       "uf": "RJ",
       "cargo": "Deputada Federal",
@@ -27593,7 +27593,7 @@
     {
       "nome": "Júlia Casamasso",
       "nome_completo": "Julia Casamasso Mattoso",
-      "destaque": false,
+      "destaque": true,
       "numero": "5007",
       "uf": "RJ",
       "cargo": "Deputada Federal",
@@ -28809,7 +28809,7 @@
     {
       "nome": "Fernanda Melchionna",
       "nome_completo": "Fernanda Melchionna e Silva",
-      "destaque": false,
+      "destaque": true,
       "numero": "5050",
       "uf": "RS",
       "cargo": "Deputada Federal",
@@ -29645,7 +29645,7 @@
     {
       "nome": "Samara Madureira",
       "nome_completo": "Samara Madureira Morais",
-      "destaque": false,
+      "destaque": true,
       "numero": "5077",
       "uf": "SC",
       "cargo": "Deputada Federal",
@@ -30994,7 +30994,7 @@
     {
       "nome": "Sâmia Bomfim",
       "nome_completo": "Sâmia de Souza Bomfim",
-      "destaque": false,
+      "destaque": true,
       "numero": "5000",
       "uf": "SP",
       "cargo": "Deputada Federal",
@@ -52236,7 +52236,7 @@
     {
       "nome": "Humberto Matos",
       "nome_completo": "Humberto Matos de Oliveira",
-      "destaque": false,
+      "destaque": true,
       "numero": "65065",
       "uf": "RS",
       "cargo": "Deputado Estadual",
@@ -65061,7 +65061,7 @@
     {
       "nome": "Dani Portela",
       "nome_completo": "Danielle Gondim Portela",
-      "destaque": false,
+      "destaque": true,
       "numero": "13000",
       "uf": "PE",
       "cargo": "Deputada Estadual",
@@ -65175,7 +65175,7 @@
     {
       "nome": "Jô Cavalcanti",
       "nome_completo": "Maria Joselita Pereira Cavalcanti",
-      "destaque": false,
+      "destaque": true,
       "numero": "50000",
       "uf": "PE",
       "cargo": "Deputada Estadual",
@@ -65422,7 +65422,7 @@
     {
       "nome": "Yasmim Alves",
       "nome_completo": "Kimberly Yasmim Alves de Mendonça",
-      "destaque": false,
+      "destaque": true,
       "numero": "50999",
       "uf": "PE",
       "cargo": "Deputada Estadual",
