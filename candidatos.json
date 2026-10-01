@@ -4680,7 +4680,7 @@
     {
       "nome": "Manuela D Ávila",
       "nome_completo": "Manuela Pinto Vieira D Ávila",
-      "destaque": false,
+      "destaque": true,
       "numero": "500",
       "uf": "RS",
       "cargo": "Senadora",

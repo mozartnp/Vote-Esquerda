@@ -12,8 +12,8 @@ Site de página única para as eleições de 2026: lista de candidaturas do camp
 |---|---|---|
 | Tipo de site | Estático: HTML + CSS + JS puro, sem framework e sem build | Simples, rápido e difícil de derrubar |
 | Dados | Um arquivo `candidatos.json` na raiz, lido via `fetch` | Editar a lista = editar um arquivo, sem mexer no código |
-| Hospedagem | Repositório no GitHub + Cloudflare Pages (alternativa: Netlify) | Grátis, CDN global, proteção contra DDoS, HTTPS automático, deploy a cada commit |
-| Domínio | Domínio próprio já registrado, apontado via CNAME no painel do Pages | — |
+| Hospedagem | Repositório no GitHub + uma CDN que sirva arquivos estáticos | Grátis, CDN global, proteção contra DDoS, HTTPS automático, deploy a cada commit |
+| Domínio | Domínio próprio já registrado, apontado por DNS para a hospedagem | — |
 | Paginação | Botão **"Carregar mais"**, 12 cards por vez | Melhor que paginação numerada no celular. 12 em vez de 24 corta pela metade as requisições de foto do primeiro carregamento |
 | Busca e filtros | Um painel único à esquerda dos resultados. O topo da página não tem controle nenhum | Busca e filtro espalhados em dois lugares era a origem da confusão: ninguém sabia que dava para combinar |
 | Busca | Campo de texto dentro do painel, que procura só por **nome, nome completo e número** | Partido e estado saíram dela porque agora têm faceta própria. Um campo que fazia tudo ao mesmo tempo não deixava claro o que ele fazia |
@@ -469,26 +469,62 @@ texto só, senão o leitor de tela soletra dígito a dígito.
 
 ```
 /
-├── index.html          # página única (CSS e JS embutidos)
+├── index.html          # a marcação da página
+├── css/
+│   └── estilo.css      # todo o CSS
+├── js/
+│   ├── base.js         # constantes, elementos, ajudantes — não importa nada
+│   ├── catalogo.js     # facetas, carregamento, painel, card, URL
+│   ├── colinha.js      # vagas, busca na vaga, santinho, imagem
+│   └── principal.js    # entrada (<script type="module">)
 ├── candidatos.json     # dados
 ├── fontes/             # Archivo Black e Public Sans (.woff2, subconjunto latin)
 └── fotos/              # uma imagem por candidato
     └── 1350-pe.jpg
 ```
 
-Teste local (o `fetch` não funciona abrindo o arquivo direto com `file://`):
+Teste local (o `fetch` e os módulos não funcionam abrindo o arquivo direto com `file://`):
 ```bash
 python3 -m http.server 8000   # e abrir http://localhost:8000
 ```
+
+### Duas regras dos módulos
+
+São as duas coisas que a divisão do JS exigiu, e as duas que um refactor
+distraído quebra sem perceber:
+
+**1. `catalogo.js` e `colinha.js` se importam em ciclo, de propósito.** O card
+tem botão de pôr na colinha, e a colinha busca nos dados que o catálogo carrega
+— não há como desatar sem um terceiro módulo artificial. O ciclo é seguro
+porque nenhum dos dois lê o outro em tempo de avaliação: toda referência
+cruzada está dentro de callback. **Não** ponha no corpo de um deles código que
+leia binding do outro: o ciclo faz um avaliar primeiro, e o que ele importa do
+outro ainda é `undefined`.
+
+**2. O boot da colinha fica em `principal.js`, não no corpo de `colinha.js`.**
+É por isso que existe o `iniciarColinha()`. Se `colinha = lerColinha();
+pintarColinha()` rodasse ao avaliar `colinha.js`, o ciclo poderia avaliar esse
+arquivo antes de `catalogo.js` e `candDaVaga` leria `porChave` indefinido —
+TypeError para quem já tem colinha salva, ninguém para quem não tem (o
+`k && porChave[k]` curto-circuita). É o tipo de bug que passa em teste limpo.
+
+Corolário de ambas: binding importado é **somente leitura**. Quem precisa mudar
+estado de outro módulo muta (`botoes.length = 0` em `catalogo.js`, em vez de
+`botoes = []`) ou chama uma função de lá.
 
 ---
 
 ## 8. Publicação
 
 1. Criar um repositório no GitHub com os arquivos acima.
-2. No Cloudflare Pages: *Create project → Connect to Git*, selecionar o repositório. Não há build command e o output directory é `/`.
-3. Em *Custom domains*, adicionar o domínio e criar o CNAME indicado no DNS. O HTTPS é automático.
-4. Cada commit na branch principal publica sozinho em 1–2 minutos.
+2. Publicar como site estático em qualquer CDN que sirva a pasta como está: não há build command e o diretório de saída é a raiz do repositório.
+3. Apontar o domínio próprio por DNS para a hospedagem. O HTTPS é automático nas CDNs usuais.
+4. Configurar a publicação a cada commit na branch principal.
+
+Como *esta* instalação está ligada não fica documentado aqui: num repositório
+público, descrever a configuração de um deploy aponta a superfície de ataque —
+e a seção 9 reconhece que o risco real do projeto é invasão de conta. As notas
+de infraestrutura ficam fora do repo.
 
 ### Rotina de atualização (para quem cuida da lista)
 - **Adicionar:** editar `candidatos.json` pelo GitHub (ícone de lápis), colar um novo bloco, subir a foto em `fotos/`, atualizar `atualizado_em` e fazer commit.
@@ -505,7 +541,7 @@ python3 -m http.server 8000   # e abrir http://localhost:8000
 - **Editores:** cada pessoa com o próprio acesso ao repositório. Nunca compartilhar senha.
 - **Conteúdo:** renderização só com `textContent`, links só `https://`, links externos com `rel="noopener noreferrer"`.
 - **Sites falsos:** divulgar sempre o endereço exato. Se possível, registrar variações óbvias do domínio.
-- Opcional: cabeçalhos de segurança via arquivo `_headers` do Cloudflare Pages/Netlify (CSP restringindo tudo a `'self'`, já que não há mais domínio externo; `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`). Nesse caso, mover o JS inline para `app.js`.
+- Opcional: cabeçalhos de segurança via arquivo `_headers` (suportado por Cloudflare e Netlify) (CSP restringindo tudo a `'self'`, já que não há mais domínio externo; `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`). O JS já está em módulos (`principal.js` e companhia) e o CSS em `estilo.css`; só resta o `onsubmit="return false"` do formulário de busca impedindo que o `script-src` dispense o `'unsafe-inline'`.
 
 ---
 

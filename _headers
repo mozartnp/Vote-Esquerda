@@ -1,5 +1,6 @@
-# Cabeçalhos servidos pelo Cloudflare Pages.
+# Cabeçalhos servidos pelo Cloudflare Workers Static Assets.
 # Sintaxe: um caminho na margem, cada cabeçalho indentado com 2 espaços.
+# Limites da plataforma: até 100 regras, 2.000 caracteres por linha.
 
 /*
   X-Content-Type-Options: nosniff
@@ -8,18 +9,40 @@
   Permissions-Policy: geolocation=(), camera=(), microphone=(), interest-cohort=()
   Content-Security-Policy: default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'
 
-# A página e a lista precisam revalidar: numa correção de véspera de eleição,
-# o visitante tem que ver o texto novo no primeiro reload, não no segundo.
-# Revalidar é barato — o ETag devolve 304 sem corpo.
+# Antes de mexer no que vem abaixo: o Cache-Control padrão da plataforma já é
+# "public, max-age=0, must-revalidate" — o mesmo padrão do Pages, e é o que o
+# /robots.txt recebe aqui sem ter regra nenhuma. Ou seja, toda regra abaixo que
+# repete esse valor não muda nada hoje. Ficam de propósito, como cinto e
+# suspensório: deixam a intenção escrita e seguram o comportamento se a
+# hospedagem mudar. Quem de fato sobrescreve o padrão são só as três últimas,
+# que pedem cache longo.
+
+# A página, o CSS, o JS e a lista precisam revalidar: numa correção de véspera
+# de eleição, o visitante tem que ver o texto novo no primeiro reload, não no
+# segundo. Revalidar é barato — o ETag devolve 304 sem corpo.
 /
   Cache-Control: public, max-age=0, must-revalidate
 
+# Morta na prática: /index.html responde 307 para /, então ninguém recebe
+# conteúdo por esta URL. Fica por simetria com a regra de cima.
 /index.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+# O CSS e os módulos JS não têm hash no nome, então cache longo os deixaria
+# fora de sincronia entre si e com o index.html que os referencia. Nada a
+# sobrescrever, portanto — é só o padrão, escrito à mão.
+/css/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+/js/*
   Cache-Control: public, max-age=0, must-revalidate
 
 /candidatos.json
   Cache-Control: public, max-age=0, must-revalidate
 
+# Daqui para baixo são as regras que realmente mudam o comportamento, pedindo
+# cache mais longo que o padrão.
+#
 # Fotos não têm hash no nome (1350-pe.jpg), então cache eterno prenderia uma foto
 # trocada por um ano. Um dia fresco, uma semana servindo o antigo enquanto rebusca.
 /fotos/*

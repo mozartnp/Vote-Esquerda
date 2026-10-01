@@ -18,7 +18,13 @@ E abra <http://localhost:8000>.
 ## Arquivos
 
 ```
-index.html         página inteira (CSS e JS embutidos)
+index.html         a marcação da página
+css/estilo.css     todo o CSS
+js/                os módulos, nesta ordem de dependência:
+  base.js          constantes, elementos e ajudantes
+  catalogo.js      a lista: facetas, carregamento, painel, card
+  colinha.js       a colinha: vagas, busca, santinho, imagem
+  principal.js     entrada: amarra os eventos e dá a partida
 candidatos.json    a lista de candidaturas
 fotos/             uma foto por candidatura (3.921 arquivos, ~31 MB)
 logos/             logos dos partidos em SVG
@@ -87,9 +93,12 @@ A tabela completa dos campos está na seção 4 do [ESPECIFICACAO.md](ESPECIFICA
 
 ## Publicando
 
-Site estático: basta servir a pasta como está. No Cloudflare Pages, conecte o
-repositório sem build command e com output directory `/`. Cada commit no `main`
-publica automaticamente.
+Site estático: basta servir a pasta como está, sem build command e com a raiz
+do repositório como diretório de saída. Nas CDNs usuais dá para ligar no
+repositório e publicar a cada commit no `main`.
+
+O `_headers` (Cloudflare, Netlify) cuida de CSP e cache — ver os comentários
+dentro dele antes de mexer.
 
 ## Dados
 
