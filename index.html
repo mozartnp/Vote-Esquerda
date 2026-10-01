@@ -347,8 +347,10 @@ footer .aviso{flex-direction:column;align-items:flex-start;gap:4px;justify-conte
   var FACETAS = [
     {id:'recomendacao', label:'Recomendação', campo:'recLabel',   ordem:'rotulo', tipo:'alternador'},
     {id:'cargo',      label:'Cargo',          campo:'cargoLabel', ordem:'fixa'},
+    // "Brasil" fora da lista: BR nao e um estado, e a abrangencia nacional das
+    // cinco candidaturas a presidencia. Quem procura por elas usa o cargo.
     {id:'uf',         label:'Estado',         campo:'uf',         ordem:'rotulo',
-     rotulo:function (v) { return UFS[v] || v; }},
+     excluir:['BR'], rotulo:function (v) { return UFS[v] || v; }},
     {id:'partido',    label:'Partido',        campo:'partido',    ordem:'quantidade'},
     // "Sem federação" fica de fora: a faceta serve para quem quer votar numa
     // federação, nao para recortar os cinco partidos que concorrem sozinhos —

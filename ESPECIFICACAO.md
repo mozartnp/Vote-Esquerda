@@ -99,6 +99,8 @@ Estrutura da página, de cima para baixo:
 - **Alternador** (um valor só): "Recomendação do site", "Candidatura indígena" e
   "Candidatura quilombola" são marcações diretas, sem acordeão em volta. **Nenhuma vem
   marcada** — a página abre listando todo mundo.
+- **Estado não lista "Brasil".** `BR` não é um estado: é a abrangência nacional das cinco
+  candidaturas à presidência, que se acham pelo cargo ou pelo nome. São 27 opções, não 28.
 - Os três marcadores de identidade ficam juntos no pé do painel. "Candidatura indígena"
   cobre as 105 (`etnia` = Indígena), **inclusive as 15 que não declararam povo** e que por
   isso não aparecem no seletor logo abaixo.

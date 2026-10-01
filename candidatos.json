@@ -4855,7 +4855,7 @@
     {
       "nome": "Marina Silva",
       "nome_completo": "Maria Osmarina Marina da Silva Vaz de Lima",
-      "destaque": false,
+      "destaque": true,
       "numero": "180",
       "uf": "SP",
       "cargo": "Senadora",
