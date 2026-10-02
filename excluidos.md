@@ -1,7 +1,11 @@
 # Candidaturas excluídas da lista
 
-Extração do TSE de 30/09/2026. Estas 148 candidaturas existem no dataset dos 10 partidos,
-mas **não entraram** no `candidatos.json`.
+Extração do TSE de 30/09/2026, revisada em 02/10/2026. Estas 162 candidaturas existem no
+dataset dos 10 partidos, mas **não entraram** no `candidatos.json`.
+
+As 14 do fim do arquivo saíram só na revisão de 02/10: na extração de 30/09 elas ainda
+estavam sub judice e apareciam na lista com a faixa de aviso. Entre 30/09 e 02/10 o TSE
+julgou os recursos, e pelo critério abaixo elas deixaram de poder entrar.
 
 ## O critério
 
@@ -11,13 +15,13 @@ tem a informação é o conjunto **Informações complementares**, no campo
 
 | Situação | Quantas | Por quê |
 |---|---|---|
-| RENÚNCIA | 98 | Retirou a candidatura |
-| INDEFERIDO | 48 | Registro negado, sem recurso pendente |
+| RENÚNCIA | 99 | Retirou a candidatura |
+| INDEFERIDO | 61 | Registro negado, sem recurso pendente |
 | CANCELADO | 1 | Registro cancelado |
 | PEDIDO NÃO CONHECIDO | 1 | Pedido sequer conhecido |
 
 Continuam **na lista** quem está sub judice — `INDEFERIDO EM PRAZO RECURSAL OU COM
-RECURSO` (112), `DEFERIDO EM PRAZO RECURSAL` (5) e `PENDENTE DE JULGAMENTO` (1) —,
+RECURSO` (99), `DEFERIDO EM PRAZO RECURSAL` (5) e `PENDENTE DE JULGAMENTO` (1) —,
 porque essas candidaturas aparecem na urna e o voto pode valer se o recurso for aceito.
 Se preferir uma lista só com registro deferido, é trocar uma linha no gerador.
 
@@ -180,3 +184,28 @@ Se preferir uma lista só com registro deferido, é trocar uma linha no gerador.
 ## PEDIDO NÃO CONHECIDO (1)
 
 - **Josiel Machado** · MS · PCO · nº 29029 · Deputado Estadual — `SQ 120002552683`
+
+## Revisão de 02/10/2026 (14)
+
+Estavam na lista até 02/10/2026, com a faixa de aviso de candidatura sub judice. O TSE
+julgou os recursos e elas passaram a `INDEFERIDO` definitivo ou `RENÚNCIA`.
+
+### RENÚNCIA (1)
+
+- **Ivan Baron** · RN · PT · nº 13013 · Deputado Estadual — `SQ 200002533857`
+
+### INDEFERIDO (13)
+
+- **Anne Lucy** · SP · PCO · nº 2989 · Deputada Federal — `SQ 250002553327`
+- **Cristiane Amorim** · SP · PCO · nº 2909 · Deputada Federal — `SQ 250002553335`
+- **Ednelson Cesaretti** · SP · PCO · nº 290 · Senador — `SQ 250002552955`
+- **Flavia Prates** · SP · PCO · nº 2919 · Deputada Federal — `SQ 250002553332`
+- **Genesio Gente da Gente** · SP · PSOL · nº 50121 · Deputado Estadual — `SQ 250002538920`
+- **Izadora Dias** · SP · PCO · nº 29 · Governadora — `SQ 250002553062`
+- **João Caproni Pimenta** · SP · PCO · nº 2929 · Deputado Federal — `SQ 250002553331`
+- **Leandro Paggiaro** · SP · PCO · nº 2979 · Deputado Federal — `SQ 250002553334`
+- **Mauro Souza** · SP · PCO · nº 2939 · Deputado Federal — `SQ 250002553329`
+- **Paulo Lago** · SP · PCO · nº 2999 · Deputado Federal — `SQ 250002553328`
+- **Rosana Baesso** · SP · PCO · nº 2959 · Deputada Federal — `SQ 250002553333`
+- **Simone Souza** · SP · PCO · nº 2900 · Deputada Federal — `SQ 250002553330`
+- **William Cesario** · SP · PCO · nº 2949 · Deputado Federal — `SQ 250002553326`

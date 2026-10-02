@@ -64,7 +64,7 @@ Estrutura da página, de cima para baixo:
 │                  VOTE ESQUERDA (vermelho)                │
 │      Encontre candidatas e candidatos… (subtítulo)       │  nenhum controle aqui
 ├──────────────────────────────────────────────────────────┤  fundo creme
-│ ┌────────────────────┐  3.789 candidaturas               │
+│ ┌────────────────────┐  3.775 candidaturas               │
 │ │ BUSCAR E FILTRAR ✕ │  ┌──────────┐ ┌──────────┐        │
 │ │ 🔍 Nome ou número  │  │ (foto)   │ │          │        │  grade auto-fill,
 │ │ ☐ Recomendação  27 │  │ Nome     │ │   card   │        │  mín. 340px/coluna
@@ -279,7 +279,7 @@ painel, no impresso, na imagem e no texto do WhatsApp. No DF a segunda vaga se c
 estado que a colinha já tem).
 
 Cada cargo tem um tamanho fixo de número de urna, e é ele que desenha as caixas vazias de
-quem ainda não escolheu — vale para as 3.789 candidaturas da lista, sem exceção:
+quem ainda não escolheu — vale para toda candidatura da lista, sem exceção:
 
 | Ordem | Vaga | Dígitos |
 |---|---|---|
@@ -370,7 +370,7 @@ aparece**: ela não teria o que dizer, e a observação `**` já explica a regra
 Só `localStorage`, na chave `vote-esquerda-colinha`. **Sem banco de dados e sem nada sair do
 navegador.** Formato: `{"v":1,"vagas":{"presidente":"<sq>", …}}`.
 
-- Guarda a **chave da candidatura** (o `sq` do TSE, único nos 3.789 registros), nunca a
+- Guarda a **chave da candidatura** (o `sq` do TSE, único em toda a lista), nunca a
   candidatura inteira. Se alguém sair da lista, a vaga esvazia sozinha em vez de a colinha
   continuar mostrando quem não concorre mais. A reserva, para um bloco novo editado à mão sem
   `sq`, é `numero-uf-cargo`.
@@ -591,9 +591,9 @@ de infraestrutura ficam fora do repo.
 ## 11. Pendentes para o desenvolvedor
 
 - [ ] **Preencher o rodapé** com o responsável pela página (nome/CPF ou CNPJ), conforme a Resolução TSE nº 23.610/2019 sobre propaganda eleitoral na internet. **Confirmar as exigências com assessoria jurídica.**
-- [x] Lista real carregada do Portal de Dados Abertos do TSE (3.789 candidaturas de PDT, PCdoB, PSOL, PT, PV, REDE, PCB, PSTU, UP e PCO). Ver seção 12.
+- [x] Lista real carregada do Portal de Dados Abertos do TSE (3.775 candidaturas de PDT, PCdoB, PSOL, PT, PV, REDE, PCB, PSTU, UP e PCO). Ver seção 12.
 - [x] Links do TSE: URL individual de cada candidatura no DivulgaCandContas (ver seção 12).
-- [x] Pasta `fotos/` com as 3.789 fotos oficiais do TSE (~31 MB; os arquivos já vêm com ~8 KB, não precisaram de otimização).
+- [x] Pasta `fotos/` com as 3.789 fotos oficiais do TSE (3.775 em uso após a revisão de 02/10) (~31 MB; os arquivos já vêm com ~8 KB, não precisaram de otimização).
 - [ ] Marcar os `destaque: true` — o selo RECOMENDAÇÃO do card e a faceta "Recomendação do site".
 - [ ] Preencher o campo `proposta`: o TSE não publica texto de proposta, só PDFs de plano de governo para as majoritárias.
 - [ ] GitHub Action para validar o `candidatos.json` a cada commit (ex.: `python -m json.tool candidatos.json` ou `jq . candidatos.json`), bloqueando deploy com JSON quebrado.
@@ -694,13 +694,13 @@ O `consulta_cand` traz `DS_SITUACAO_CANDIDATURA` inteiro como `#NE` e não serve
 filtrar. Quem tem a informação é o conjunto **Informações complementares**
 (`consulta_cand_complementar`), no campo `DS_SITUACAO_JULGAMENTO`.
 
-Ficaram **de fora** 148 candidaturas: 98 renúncias, 48 indeferidas, 1 cancelada e 1 com
+Ficaram **de fora** 162 candidaturas: 99 renúncias, 61 indeferidas, 1 cancelada e 1 com
 pedido não conhecido — gente que definitivamente não concorre. Estão todas listadas em
 `excluidos.md`.
 
-Continuam **na lista** as que estão sub judice (112 indeferidas em prazo recursal, 5
+Continuam **na lista** as que estão sub judice (99 indeferidas em prazo recursal, 5
 deferidas com recurso, 1 pendente de julgamento), porque aparecem na urna e o voto pode
-valer se o recurso for aceito — mas o card **avisa**: essas 118 vêm com o campo `situacao`
+valer se o recurso for aceito — mas o card **avisa**: essas 105 vêm com o campo `situacao`
 preenchido e mostram a faixa de aviso. Para uma lista só com registro deferido, é trocar o
 conjunto `FORA` no gerador.
 
@@ -730,3 +730,33 @@ assert sum(1 for x in cent if x % 2 == 0) / len(cent) < 0.99
 
 E confira um caso conhecido contra o DivulgaCandContas antes de publicar — foi um visitante
 olhando a página do Lula que achou este.
+
+#### Os outros dois testes que valem rodar antes de publicar
+
+**Situação do registro — use lista de permissão, nunca de bloqueio.** O gerador original
+excluía as situações ruins conhecidas (`RENÚNCIA`, `INDEFERIDO`, `CANCELADO`, `PEDIDO NÃO
+CONHECIDO`). O problema é que isso deixa passar qualquer valor novo ou inesperado: uma
+candidatura que vire `RENÚNCIA` depois da extração entra na lista **sem aviso nenhum**,
+igual a uma candidatura normal. Foi o que aconteceu com uma em 02/10/2026. Inverta — só
+estas quatro podem entrar, e qualquer outra coisa é erro:
+
+```python
+FICAM = {'DEFERIDO', 'DEFERIDO EM PRAZO RECURSAL OU COM RECURSO',
+         'INDEFERIDO EM PRAZO RECURSAL OU COM RECURSO', 'PENDENTE DE JULGAMENTO'}
+assert all(sit[c['sq']] in FICAM for c in candidatos)
+```
+
+Vale revalidar **na véspera**, mesmo sem refazer a extração: o TSE julga recursos até o
+último momento, e a lista envelhece sozinha.
+
+**Links de rede social.** O `rede_social_candidato` traz várias URLs por candidatura, e
+muita gente registra link de *post* em vez de perfil. Cortar no primeiro trecho do caminho
+produz `instagram.com/p`, `/reel`, `/invites`, `/stories` — que não levam a perfil nenhum.
+Prefira outra URL da mesma candidatura; se nenhuma for perfil, deixe o campo vazio.
+
+```python
+RESERVADO = {'p', 'reel', 'reels', 'invites', 'explore', 'stories', 'tv', 'accounts'}
+assert not [c for c in candidatos if (m := re.match(
+    r'https://(?:www\.)?instagram\.com/([^/?#]+)/?$', c['rede'] or ''))
+    and m.group(1).lower() in RESERVADO]
+```

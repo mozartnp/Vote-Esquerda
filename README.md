@@ -104,7 +104,7 @@ dentro dele antes de mexer.
 ## Dados
 
 A lista vem do [Portal de Dados Abertos do TSE](https://dadosabertos.tse.jus.br/dataset/candidatos-2026),
-extração de 30/09/2026, filtrada pelos partidos PDT, PCdoB, PSOL, PT, PV, REDE, PCB,
-PSTU, UP e PCO. As fotos são as oficiais do TSE. Os campos `proposta` e `destaque` não
+extração de 30/09/2026 revisada em 02/10/2026, filtrada pelos partidos PDT, PCdoB, PSOL,
+PT, PV, REDE, PCB, PSTU, UP e PCO. As fotos são as oficiais do TSE. Os campos `proposta` e `destaque` não
 existem nos dados abertos e são preenchidos à mão.
 

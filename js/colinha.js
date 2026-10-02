@@ -13,9 +13,9 @@ import { SO_DIGITOS, fecharGaveta, porCargo, porChave, todos } from './catalogo.
 // Seis vagas: a cedula inteira de uma eleicao geral. Senado tem duas porque e
 // o que se vota em 2026. A ordem e a da urna, que e a ordem em que a colinha
 // vai ser lida na hora de votar.
-// `digitos` e o tamanho do numero de urna do cargo. Vale para as 3.789
-// candidaturas da lista, sem excecao, e e o que desenha as caixas vazias de
-// quem ainda nao escolheu: a pessoa imprime e preenche a mao.
+// `digitos` e o tamanho do numero de urna do cargo. Vale para toda candidatura
+// da lista, sem excecao, e e o que desenha as caixas vazias de quem ainda nao
+// escolheu: a pessoa imprime e preenche a mao.
 // A ordem e a da urna: e nela que a pessoa vai ler a colinha, de cima para
 // baixo, enquanto digita. Deputado federal primeiro, presidente por ultimo.
 var VAGAS = [
@@ -46,10 +46,10 @@ var colinhaEl = $('colinha'), colinhaRotulo = $('colinhaRotulo'), colinhaUf = $(
     modalFundo = $('modalFundo'), modalCaixa = $('modalCaixa'), modalTitulo = $('modalTitulo'),
     modalTexto = $('modalTexto'), modalAcoes = $('modalAcoes');
 
-// O `sq` do TSE identifica a candidatura e e unico nos 3.789 registros. A
-// reserva existe porque o JSON e editado a mao e o campo pode faltar num bloco
-// novo; numero + estado + cargo tambem distingue, porque numero de urna nao
-// repete dentro do mesmo cargo no mesmo estado.
+// O `sq` do TSE identifica a candidatura e e unico em toda a lista. A reserva
+// existe porque o JSON e editado a mao e o campo pode faltar num bloco novo;
+// numero + estado + cargo tambem distingue, porque numero de urna nao repete
+// dentro do mesmo cargo no mesmo estado.
 export function chaveCand(c) { return c.sq || (c.numero + '-' + c.uf + '-' + c.cat); }
 function nomeUF(uf) { return UFS[uf] || uf; }
 function candDaVaga(v) { var k = colinha[v.id]; return (k && porChave[k]) || null; }
