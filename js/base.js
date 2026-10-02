@@ -23,7 +23,8 @@ export var ORDEM = {
   cargo:      CATEGORIAS.map(function (c) { return c.label; }).concat([OUTRO_CARGO]),
   idade:      ['Até 29 anos','30 a 39 anos','40 a 49 anos','50 a 59 anos','60 a 69 anos','70 anos ou mais'],
   instrucao:  ['Lê e escreve','Ensino fundamental incompleto','Ensino fundamental completo','Ensino médio incompleto','Ensino médio completo','Superior incompleto','Superior completo'],
-  patrimonio: ['Sem bens declarados','Até R$ 50 mil','R$ 50 mil a R$ 200 mil','R$ 200 mil a R$ 1 milhão','Acima de R$ 1 milhão']
+  patrimonio: ['Sem bens declarados','Até R$ 50 mil','R$ 50 mil a R$ 200 mil',
+               'R$ 200 mil a R$ 1 milhão','R$ 1 milhão a R$ 5 milhões','Acima de R$ 5 milhões']
 };
 
 // As facetas, na ordem em que aparecem no painel.

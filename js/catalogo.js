@@ -42,7 +42,8 @@ function faixaPatrimonio(v) {
   if (n < 5e4) return ORDEM.patrimonio[1];
   if (n < 2e5) return ORDEM.patrimonio[2];
   if (n < 1e6) return ORDEM.patrimonio[3];
-  return ORDEM.patrimonio[4];
+  if (n < 5e6) return ORDEM.patrimonio[4];
+  return ORDEM.patrimonio[5];
 }
 function rotulo(f, v) { return f.rotulo ? f.rotulo(v) : v; }
 
