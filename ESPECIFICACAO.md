@@ -621,7 +621,7 @@ Gerado a partir do **Portal de Dados Abertos do TSE**, conjunto *Candidatos - 20
 | `federacao` | de `SG_FEDERACAO`. Três valores: `Brasil da Esperança (PT, PCdoB, PV)` 1.401 · `PSOL e REDE` 1.028 · `Sem federação` 1.360 (PDT, UP, PCO, PSTU, PCB) |
 | `quilombola` | `ST_QUILOMBOLA` (complementar), booleano. 81 candidaturas |
 | `povo` | `DS_ETNIA_INDIGENA` (complementar). 90 candidaturas em 46 povos — Guarani Kaiowá 9, Makuxí 8, Mundurukú 5… `NÃO INFORMADA`, `#NULO`, `MAL DEFINIDAS` e `NÃO DETERMINADA` viram string vazia: são ausência de dado, não um povo. Todas as 90 têm `etnia` = Indígena; 15 indígenas não declararam povo |
-| `patrimonio` | soma de `VR_BEM_CANDIDATO` (bem_candidato) |
+| `patrimonio` | soma de `VR_BEM_CANDIDATO` **só do `bem_candidato_2026_BRASIL.csv`**. O ZIP traz 29 CSVs: um por UF, mais `BR.csv` (cargos nacionais) e mais o `BRASIL.csv`, que é a consolidação de todos. Somar o ZIP inteiro conta cada bem **duas vezes** — foi o que aconteceu na extração de 30/09/2026 (ver abaixo) |
 | `situacao` | `DS_SITUACAO_JULGAMENTO` (consulta_cand_complementar) — filtra a lista e gera o aviso do card |
 | `rede` | `DS_URL` (rede_social_candidato), 1 por candidatura |
 | `foto` | pacotes oficiais `foto_cand2026_<UF>_div.zip`, renomeadas para `fotos/<numero>-<uf>.jpg` |
@@ -709,3 +709,24 @@ conjunto `FORA` no gerador.
 Os scripts de extração estão fora do repositório (foram de uso único). Para atualizar a
 lista antes do 2º turno, o caminho é baixar de novo os três zips do portal e refazer o cruzamento
 por `SQ_CANDIDATO`.
+
+#### Armadilha dos zips do TSE: não dê glob em `*.csv`
+
+Os zips do portal trazem **um CSV por UF e também um consolidado** (`..._BRASIL.csv`) com
+tudo de novo. Ler o zip inteiro conta cada registro duas vezes.
+
+Foi o que aconteceu com `patrimonio` na extração de 30/09/2026: o site mostrou o dobro do
+patrimônio de **2.460 candidaturas** até 02/10/2026, e a faixa "Acima de R$ 1 milhão" acusava
+825 pessoas onde havia 440. Corrigido recalculando só do `BRASIL.csv`.
+
+Se for refazer, há um teste de meio segundo que pega esse erro: **se 100% dos valores
+terminarem em centavo par, está dobrado.** Em dado financeiro real a proporção fica perto de
+80% (os valores declarados se concentram em números redondos), nunca em 100%.
+
+```python
+cent = [round(c['patrimonio'] * 100) for c in candidatos if c['patrimonio'] > 0]
+assert sum(1 for x in cent if x % 2 == 0) / len(cent) < 0.99
+```
+
+E confira um caso conhecido contra o DivulgaCandContas antes de publicar — foi um visitante
+olhando a página do Lula que achou este.
