@@ -394,7 +394,7 @@ export function pintarColinha() {
   colinhaRotulo.textContent = n ? 'Minha colinha ' + n + '/' + VAGAS.length : 'Quero minha colinha';
 
   // A faixa so aparece quando ha estado definido: sem candidatura estadual na
-  // colinha ela nao tem o que dizer, e a observacao ** ja explica a regra.
+  // colinha ela nao tem o que dizer, e a nota do rodape ja explica a regra.
   colinhaUf.textContent = '';
   colinhaUf.hidden = !uf;
   if (uf) {

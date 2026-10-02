@@ -251,6 +251,19 @@ footer .aviso{flex-direction:column;align-items:flex-start;gap:4px;justify-conte
 
 /* Faixa do estado: a regra do "um estado so" fica visivel em vez de aparecer
    somente quando o visitante erra. */
+/* O aviso que mais importa da colinha inteira, por isso sai das notas de rodape
+   e vem logo abaixo do titulo: quem so descobre na fila que nao pode consultar o
+   celular ja perdeu a colinha. Barra vermelha a esquerda em vez de fundo
+   vermelho — o amarelo do summary fica logo acima, e dois blocos saturados
+   encostados brigam em vez de hierarquizar.
+   O seletor precisa dos dois niveis: este <p> esta dentro de `.faixa`, e
+   `.faixa p` (cor clara, centralizado, clamp de tamanho) ganharia de uma classe
+   sozinha e deixaria o aviso quase invisivel sobre o fundo creme. */
+.colinha .colinha-alerta{margin:0;padding:13px 14px 13px 16px;
+  border-left:6px solid var(--vermelho);background:var(--fundo);
+  font-size:15px;line-height:1.45;text-align:left;color:var(--texto)}
+.colinha .colinha-alerta b{font-weight:700}
+
 .colinha-uf{padding:9px 14px;background:var(--marinho);color:#E8ECF4;font-size:13px;line-height:1.4}
 .colinha-uf[hidden]{display:none}
 .colinha-uf b{color:var(--amarelo)}
