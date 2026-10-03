@@ -1,11 +1,12 @@
 # Candidaturas excluídas da lista
 
-Extração do TSE de 30/09/2026, revisada em 02/10/2026. Estas 162 candidaturas existem no
-dataset dos 10 partidos, mas **não entraram** no `candidatos.json`.
+Extração do TSE de 30/09/2026, revisada em 02/10 e 03/10/2026. Estas 167 candidaturas
+existem no dataset dos 10 partidos, mas **não entraram** no `candidatos.json`.
 
-As 14 do fim do arquivo saíram só na revisão de 02/10: na extração de 30/09 elas ainda
-estavam sub judice e apareciam na lista com a faixa de aviso. Entre 30/09 e 02/10 o TSE
-julgou os recursos, e pelo critério abaixo elas deixaram de poder entrar.
+As 19 do fim do arquivo saíram nas revisões de 02/10 e 03/10, não na extração original: elas
+estavam deferidas ou sub judice em 30/09 e apareciam na lista. O TSE julgou recursos e
+registrou renúncias depois, e pelo critério abaixo elas deixaram de poder entrar. **Vale
+revalidar todo dia na semana da eleição** — só entre 02/10 e 03/10 mudaram seis.
 
 ## O critério
 
@@ -15,13 +16,13 @@ tem a informação é o conjunto **Informações complementares**, no campo
 
 | Situação | Quantas | Por quê |
 |---|---|---|
-| RENÚNCIA | 99 | Retirou a candidatura |
-| INDEFERIDO | 61 | Registro negado, sem recurso pendente |
+| RENÚNCIA | 102 | Retirou a candidatura |
+| INDEFERIDO | 63 | Registro negado, sem recurso pendente |
 | CANCELADO | 1 | Registro cancelado |
 | PEDIDO NÃO CONHECIDO | 1 | Pedido sequer conhecido |
 
 Continuam **na lista** quem está sub judice — `INDEFERIDO EM PRAZO RECURSAL OU COM
-RECURSO` (99), `DEFERIDO EM PRAZO RECURSAL` (5) e `PENDENTE DE JULGAMENTO` (1) —,
+RECURSO` (98), `DEFERIDO EM PRAZO RECURSAL` (5) e `PENDENTE DE JULGAMENTO` (0) —,
 porque essas candidaturas aparecem na urna e o voto pode valer se o recurso for aceito.
 Se preferir uma lista só com registro deferido, é trocar uma linha no gerador.
 
@@ -209,3 +210,19 @@ julgou os recursos e elas passaram a `INDEFERIDO` definitivo ou `RENÚNCIA`.
 - **Rosana Baesso** · SP · PCO · nº 2959 · Deputada Federal — `SQ 250002553333`
 - **Simone Souza** · SP · PCO · nº 2900 · Deputada Federal — `SQ 250002553330`
 - **William Cesario** · SP · PCO · nº 2949 · Deputado Federal — `SQ 250002553326`
+
+## Revisão de 03/10/2026, véspera do 1º turno (5)
+
+Estavam na lista até 03/10/2026. Três **renunciaram** depois de 02/10 (e estavam
+`DEFERIDO`, sem aviso nenhum no card) e duas tiveram o recurso julgado contra.
+
+### RENÚNCIA (3)
+
+- **Professora Sara** · AP · PT · nº 13690 · Deputada Estadual — `SQ 30002533107`
+- **Professora Gabriella** · CE · REDE · nº 18888 · Deputada Estadual — `SQ 60002538637`
+- **Professor Roberio Paulino** · RN · PSOL · nº 50 · Governador — `SQ 200002546757`
+
+### INDEFERIDO (2)
+
+- **Gil Santos** · SC · PSOL · nº 5093 · Deputado Federal — `SQ 240002537839`
+- **José Júlio Guahnon** · SC · REDE · nº 18800 · Deputado Estadual — `SQ 240002537805`

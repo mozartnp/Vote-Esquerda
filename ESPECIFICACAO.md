@@ -4,6 +4,14 @@ Site de página única para as eleições de 2026: lista de candidaturas do camp
 
 > **Ponto de partida:** o `index.html` e o `candidatos.json` que acompanham este documento já são uma implementação funcional e testada. A tarefa é revisar, completar os pendentes (seção 11) e publicar, não recomeçar do zero.
 
+> **Sobre os números deste documento:** toda contagem citada aqui — total de candidaturas,
+> quantas por faceta, por federação, por ocupação — é **retrato de uma data**, não valor a
+> manter atualizado. O TSE julga recursos e registra renúncias até a véspera: só entre 02 e
+> 03/10/2026 mudaram seis candidaturas. Os números servem para dar escala e tornar as regras
+> conferíveis, e envelhecem de propósito. Quem precisa do valor de agora conta no
+> `candidatos.json`. Por isso as maquetes de tela usam `N` no lugar de um número: ali
+> importa **onde** a contagem aparece, não quanto ela é.
+
 ---
 
 ## 1. Decisões tomadas
@@ -64,10 +72,10 @@ Estrutura da página, de cima para baixo:
 │                  VOTE ESQUERDA (vermelho)                │
 │      Encontre candidatas e candidatos… (subtítulo)       │  nenhum controle aqui
 ├──────────────────────────────────────────────────────────┤  fundo creme
-│ ┌────────────────────┐  3.775 candidaturas               │
+│ ┌────────────────────┐  N candidaturas                   │
 │ │ BUSCAR E FILTRAR ✕ │  ┌──────────┐ ┌──────────┐        │
 │ │ 🔍 Nome ou número  │  │ (foto)   │ │          │        │  grade auto-fill,
-│ │ ☐ Recomendação  27 │  │ Nome     │ │   card   │        │  mín. 340px/coluna
+│ │ ☐ Recomendação   N │  │ Nome     │ │   card   │        │  mín. 340px/coluna
 │ │ Cargo            + │  │▓VOTE 1350│ │          │        │  ← faixa amarela
 │ │ Estado         1 + │  │Rede │ TSE│ │          │        │
 │ │ Partido        2 + │  └──────────┘ └──────────┘        │
@@ -77,10 +85,10 @@ Estrutura da página, de cima para baixo:
 │ │ Idade            + │  │          │ │          │        │
 │ │ Escolaridade     + │  └──────────┘ └──────────┘        │
 │ │ Ocupação         + │                                   │
-│ │ Patrimônio       + │     [ CARREGAR MAIS (85) ]        │
-│ │ ☐ Indígena    105 │                                   │
+│ │ Patrimônio       + │     [ CARREGAR MAIS (N) ]         │
+│ │ ☐ Indígena       N │                                   │
 │ │ Povo indígena    + │                                   │
-│ │ ☐ Quilombola    81 │                                   │
+│ │ ☐ Quilombola     N │                                   │
 │ └────────────────────┘  painel grudado no topo (sticky)  │
 ├──────────────────────────────────────────────────────────┤
 │ VOTE ESQUERDA     Dados: TSE · [RESPONSÁVEL / CNPJ]      │  rodapé marinho
@@ -591,15 +599,15 @@ de infraestrutura ficam fora do repo.
 ## 11. Pendentes para o desenvolvedor
 
 - [ ] **Preencher o rodapé** com o responsável pela página (nome/CPF ou CNPJ), conforme a Resolução TSE nº 23.610/2019 sobre propaganda eleitoral na internet. **Confirmar as exigências com assessoria jurídica.**
-- [x] Lista real carregada do Portal de Dados Abertos do TSE (3.775 candidaturas de PDT, PCdoB, PSOL, PT, PV, REDE, PCB, PSTU, UP e PCO). Ver seção 12.
+- [x] Lista real carregada do Portal de Dados Abertos do TSE, filtrada por PDT, PCdoB, PSOL, PT, PV, REDE, PCB, PSTU, UP e PCO. Ver seção 12.
 - [x] Links do TSE: URL individual de cada candidatura no DivulgaCandContas (ver seção 12).
-- [x] Pasta `fotos/` com as 3.789 fotos oficiais do TSE (3.775 em uso após a revisão de 02/10) (~31 MB; os arquivos já vêm com ~8 KB, não precisaram de otimização).
+- [x] Pasta `fotos/` com as fotos oficiais do TSE, uma por candidatura. Vêm com ~8 KB cada, então não precisaram de otimização.
 - [ ] Marcar os `destaque: true` — o selo RECOMENDAÇÃO do card e a faceta "Recomendação do site".
 - [ ] Preencher o campo `proposta`: o TSE não publica texto de proposta, só PDFs de plano de governo para as majoritárias.
 - [ ] GitHub Action para validar o `candidatos.json` a cada commit (ex.: `python -m json.tool candidatos.json` ou `jq . candidatos.json`), bloqueando deploy com JSON quebrado.
-- [ ] Imagem de compartilhamento (`og:image`, 1200×630) com a identidade do hero, mais o favicon.
+- [x] Imagem de compartilhamento (`og:image`, 1200×630) com a identidade do hero, mais o favicon. Ver "Prévia do link" na seção 8.
 - [x] Fontes hospedadas localmente em `fontes/` (45 KB, subconjunto latin, que cobre 100% do conteúdo). A página não faz mais nenhuma requisição a domínio externo.
-- [ ] (Opcional) Arquivo `_headers` com CSP (seção 9).
+- [x] Arquivo `_headers` com CSP e cache (seção 9). Confirmado no ar: a CSP volta nos cabeçalhos da resposta.
 - [ ] Testar em celular real (Android/iOS) e com leitor de tela.
 
 ---
@@ -618,7 +626,7 @@ Gerado a partir do **Portal de Dados Abertos do TSE**, conjunto *Candidatos - 20
 | `idade` | calculada de `DT_NASCIMENTO` na data do 1º turno (04/10/2026). **Não** é o `NR_IDADE_DATA_POSSE` do conjunto complementar: aquele é a idade em 1º de janeiro de 2027 e sai um ano mais velho em 2.130 das candidaturas |
 | `ocupacao` | `DS_OCUPACAO` agrupada. O TSE tem 168 valores, de `ADVOGADO` a `ENGRAXATE` — inutilizável como filtro. Cada um cai em um de 17 grupos (ver abaixo) |
 | `ocupacao_declarada` | a `DS_OCUPACAO` crua, só passada para caixa de frase como o resto do arquivo (`ADVOGADO` → `Advogado`). O site não usa hoje; fica para o card mostrar "Professor de ensino médio" em vez do grupo "Educação", e para recruzar sem voltar ao CSV |
-| `federacao` | de `SG_FEDERACAO`. Três valores: `Brasil da Esperança (PT, PCdoB, PV)` 1.400 · `PSOL e REDE` 1.027 · `Sem federação` 1.348 (PDT, UP, PCO, PSTU, PCB) |
+| `federacao` | de `SG_FEDERACAO`. Três valores: `Brasil da Esperança (PT, PCdoB, PV)` 1399 · `PSOL e REDE` 1023 · `Sem federação` 1348 (PDT, UP, PCO, PSTU, PCB) |
 | `quilombola` | `ST_QUILOMBOLA` (complementar), booleano. 81 candidaturas |
 | `povo` | `DS_ETNIA_INDIGENA` (complementar). 90 candidaturas em 46 povos — Guarani Kaiowá 9, Makuxí 8, Mundurukú 5… `NÃO INFORMADA`, `#NULO`, `MAL DEFINIDAS` e `NÃO DETERMINADA` viram string vazia: são ausência de dado, não um povo. Todas as 90 têm `etnia` = Indígena; 15 indígenas não declararam povo |
 | `patrimonio` | soma de `VR_BEM_CANDIDATO` **só do `bem_candidato_2026_BRASIL.csv`**. O ZIP traz 29 CSVs: um por UF, mais `BR.csv` (cargos nacionais) e mais o `BRASIL.csv`, que é a consolidação de todos. Somar o ZIP inteiro conta cada bem **duas vezes** — foi o que aconteceu na extração de 30/09/2026 (ver abaixo) |
@@ -694,13 +702,13 @@ O `consulta_cand` traz `DS_SITUACAO_CANDIDATURA` inteiro como `#NE` e não serve
 filtrar. Quem tem a informação é o conjunto **Informações complementares**
 (`consulta_cand_complementar`), no campo `DS_SITUACAO_JULGAMENTO`.
 
-Ficaram **de fora** 162 candidaturas: 99 renúncias, 61 indeferidas, 1 cancelada e 1 com
+Ficaram **de fora** 167 candidaturas: 102 renúncias, 63 indeferidas, 1 cancelada e 1 com
 pedido não conhecido — gente que definitivamente não concorre. Estão todas listadas em
 `excluidos.md`.
 
-Continuam **na lista** as que estão sub judice (99 indeferidas em prazo recursal, 5
+Continuam **na lista** as que estão sub judice (98 indeferidas em prazo recursal, 5
 deferidas com recurso, 1 pendente de julgamento), porque aparecem na urna e o voto pode
-valer se o recurso for aceito — mas o card **avisa**: essas 105 vêm com o campo `situacao`
+valer se o recurso for aceito — mas o card **avisa**: essas 103 vêm com o campo `situacao`
 preenchido e mostram a faixa de aviso. Para uma lista só com registro deferido, é trocar o
 conjunto `FORA` no gerador.
 

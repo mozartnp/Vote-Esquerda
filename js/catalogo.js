@@ -72,7 +72,8 @@ function passaTexto(c, q) {
   if (!q) return true;
   // Numero de urna e hierarquico: 13 e o PT, 1301 uma federal do PT, 13000 uma
   // estadual. Por isso digito casa por prefixo, nao por pedaco — "13" devolve
-  // as 1.045 candidaturas do PT, e nao tambem o 25130 de outro partido.
+  // as candidaturas do PT, e nao tambem o 25130 de outro partido, que contem
+  // "13" no meio.
   if (SO_DIGITOS.test(q)) return c.numero.indexOf(q) === 0;
   return c.busca.indexOf(q) >= 0;
 }
